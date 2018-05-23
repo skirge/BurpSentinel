@@ -16,10 +16,7 @@
  */
 package model;
 
-import burp.IHttpRequestResponse;
-import burp.IHttpService;
-import burp.IParameter;
-import burp.IRequestInfo;
+import burp.*;
 import gui.session.SessionManager;
 import gui.session.SessionUser;
 import java.io.IOException;
@@ -28,6 +25,10 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 import util.BurpCallbacks;
 
 /**
@@ -122,7 +123,7 @@ public class SentinelHttpRequest implements Serializable {
         // Add standard parameter
         if (requestInfo.getParameters() != null) {
             for(IParameter param: requestInfo.getParameters()) {
-                httpParamsNew.add(new SentinelHttpParam(param));
+                httpParamsNew.add(new SentinelHttpParam(param,false));
             }
         } else {
             BurpCallbacks.getInstance().print("requestinfo null!");
@@ -194,7 +195,7 @@ public class SentinelHttpRequest implements Serializable {
             SentinelHttpParam sentParam = new SentinelHttpParam(
                     SentinelHttpParam.PARAM_PATH,
                     Integer.toString(i), 0, 0, 
-                    pathPart, valStart, valStart + pathPart.length());
+                    pathPart, valStart, valStart + pathPart.length(), false);
             //httpParams.add(sentParam);
             pathParams.push(sentParam);
             i++;
@@ -297,16 +298,30 @@ public class SentinelHttpRequest implements Serializable {
     private byte[] updateParameterPath(byte[] request, SentinelHttpParam changeParam) {
         String req = BurpCallbacks.getInstance().getBurp().getHelpers().bytesToString(request);
 
-        req = req.replaceFirst("\\/" + origParam.getValue(), "\\/" + changeParam.getValue());
+        req = req.replaceFirst(Pattern.quote("/" + origParam.getValue()), Matcher.quoteReplacement("/" + changeParam.getValue()));
         
         return BurpCallbacks.getInstance().getBurp().getHelpers().stringToBytes(req);
     }
     
     private byte[] updateParameterJSON(byte[] request, SentinelHttpParam changeParam) {
-        String req = BurpCallbacks.getInstance().getBurp().getHelpers().bytesToString(request);
+        IExtensionHelpers helpers = BurpCallbacks.getInstance().getBurp().getHelpers();
+        String req = helpers.bytesToString(request);
         StringBuilder r = new StringBuilder(req);
-        r.replace(origParam.getValueStart(), origParam.getValueEnd(), changeParam.getValue());
-        return BurpCallbacks.getInstance().getBurp().getHelpers().stringToBytes(r.toString());
+        if(changeParam.isRemove()){
+            // is it a string (has " in it?)
+            int fix = 0;
+            if(origParam.valueStart > 0 && (int) r.charAt(origParam.valueStart-1) == '\"')
+                fix = 1;
+            r.replace(origParam.getValueStart() - fix, origParam.getValueEnd()+fix, changeParam.getValue());
+        } else { // replace
+            String encoded = StringEscapeUtils.escapeEcmaScript(changeParam.getValue());
+            r.replace(origParam.getValueStart(), origParam.getValueEnd(), encoded);
+        }
+        // rebuild request and recalculate Content-Length
+        IRequestInfo newRequestInfo = helpers.analyzeRequest(helpers.stringToBytes(r.toString()));
+        String newBody = r.substring(newRequestInfo.getBodyOffset());
+        byte[] newRequest = helpers.buildHttpMessage(newRequestInfo.getHeaders(), helpers.stringToBytes(newBody) );
+        return newRequest;
     }
     
 
@@ -370,7 +385,7 @@ public class SentinelHttpRequest implements Serializable {
             return;
         }
 
-        updateParam = new SentinelHttpParam(param);
+        updateParam = new SentinelHttpParam(param, false);
         updateParam.changeValue(sessionVarValue);
 
         request = BurpCallbacks.getInstance().getBurp().getHelpers().updateParameter(request, updateParam);

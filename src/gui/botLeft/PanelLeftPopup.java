@@ -217,7 +217,7 @@ public class PanelLeftPopup implements ActionListener {
         SentinelHttpParam httpParam = parent.getSelectedHttpParam();
 
         // Create new virt param
-        SentinelHttpParamVirt virtParam = new SentinelHttpParamVirt(httpParam, encoderType);
+        SentinelHttpParamVirt virtParam = new SentinelHttpParamVirt(httpParam, encoderType, false);
 
         parent.getOrigHttpMessage().getReq().addParamVirt(virtParam);
 

@@ -17,6 +17,8 @@
 
 package attacks.model;
 
+import util.BurpCallbacks;
+
 /**
  *
  * @author unreal
@@ -78,6 +80,6 @@ public class AttackData {
     }
  
     public void urlEncode() {
-        input = input.replace(' ', '+');
+        input = BurpCallbacks.getInstance().getBurp().getHelpers().urlEncode(input);
     }
 }

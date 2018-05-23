@@ -34,8 +34,9 @@ public class SentinelHttpParam implements IParameter, Serializable {
     protected String value;
     protected int valueStart;
     protected int valueEnd;
-    
-    public SentinelHttpParam(IParameter burpParameter) {
+    private boolean remove;
+
+    public SentinelHttpParam(IParameter burpParameter, boolean isRemove) {
         this.type = burpParameter.getType();
 
         this.name = burpParameter.getName();
@@ -45,11 +46,12 @@ public class SentinelHttpParam implements IParameter, Serializable {
         this.value = burpParameter.getValue();
         this.valueStart = burpParameter.getValueStart();
         this.valueEnd = burpParameter.getValueEnd();
+        this.remove = isRemove;
     }
 
     public SentinelHttpParam(byte type,
             String name, int nameStart, int nameEnd,
-            String value, int valueStart, int valueEnd)
+            String value, int valueStart, int valueEnd, boolean isRemove)
     {
         this.type = type;
         this.name = name;
@@ -58,6 +60,7 @@ public class SentinelHttpParam implements IParameter, Serializable {
         this.value = value;
         this.valueStart = valueStart;
         this.valueEnd = valueEnd;
+        this.remove = isRemove;
     }
 
 
@@ -150,5 +153,13 @@ public class SentinelHttpParam implements IParameter, Serializable {
         this.valueEnd = newParam.getValueEnd();
         this.nameStart = newParam.getNameStart();
         this.nameEnd = newParam.getNameEnd();
+    }
+
+    public void setRemove(boolean remove) {
+        this.remove = remove;
+    }
+
+    public boolean isRemove() {
+        return remove;
     }
 }

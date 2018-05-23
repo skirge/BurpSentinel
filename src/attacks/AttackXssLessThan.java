@@ -23,10 +23,8 @@ import gui.networking.AttackWorkEntry;
 import model.ResponseHighlight;
 import java.awt.Color;
 import java.util.LinkedList;
-import model.SentinelHttpMessage;
+
 import model.SentinelHttpMessageAtk;
-import model.SentinelHttpMessageOrig;
-import model.SentinelHttpParam;
 import model.XssIndicator;
 import util.BurpCallbacks;
 import util.ConnectionTimeoutException;
@@ -149,7 +147,7 @@ public class AttackXssLessThan extends AttackI {
         AttackData atkData = attackDataXss.get(state);
         SentinelHttpMessageAtk httpMessage;
         try {
-            httpMessage = attack(atkData);
+            httpMessage = attack(atkData, false);
             if (httpMessage == null) {
                 return false;
             }

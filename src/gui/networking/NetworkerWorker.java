@@ -63,7 +63,7 @@ public class NetworkerWorker extends SwingWorker<String, AttackWorkResult> {
                 while (workEntryList.isEmpty()) {
                     try {
                         workEntryList.wait();
-                    } catch (InterruptedException ex) {
+                    } catch (Exception ex) {
                         Logger.getLogger(NetworkerWorker.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -74,7 +74,11 @@ public class NetworkerWorker extends SwingWorker<String, AttackWorkResult> {
             if (networkerSender.init(work) == true) {
                 goon = true;
                 while(goon) {
-                    goon = networkerSender.sendRequest();
+                    try {
+                        goon = networkerSender.sendRequest();
+                    } catch (Exception ex) {
+                        Logger.getLogger(NetworkerWorker.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     
                     if (isCanceled) {
                         getLogger().giveSignal(NetworkerLogger.Signal.CANCEL);

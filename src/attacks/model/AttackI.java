@@ -21,8 +21,7 @@ import burp.IResponseVariations;
 import gui.networking.AttackWorkEntry;
 import gui.session.SessionManager;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import model.SentinelHttpMessageAtk;
 import model.SentinelHttpParam;
 import model.SentinelHttpParamVirt;
@@ -82,7 +81,7 @@ public abstract class AttackI {
      *   - set parent
      * 
      */
-    protected SentinelHttpMessageAtk initAttackHttpMessage(String attackVectorString, String atkName, int state) {
+    protected SentinelHttpMessageAtk initAttackHttpMessage(String attackVectorString, String atkName, int state, boolean isRemove) {
         if (attackWorkEntry == null) {
             BurpCallbacks.getInstance().print("initAttackHttpMessage: work entry is null");
             return null;
@@ -105,9 +104,9 @@ public abstract class AttackI {
         // Set change param (by copying original param)
         SentinelHttpParam changeParam = null;
         if (attackWorkEntry.attackHttpParam instanceof SentinelHttpParamVirt) {
-            changeParam = new SentinelHttpParamVirt( (SentinelHttpParamVirt) attackWorkEntry.attackHttpParam);
+            changeParam = new SentinelHttpParamVirt( (SentinelHttpParamVirt) attackWorkEntry.attackHttpParam, false);
         } else if (attackWorkEntry.attackHttpParam instanceof SentinelHttpParam) {
-            changeParam = new SentinelHttpParam(attackWorkEntry.attackHttpParam);
+            changeParam = new SentinelHttpParam(attackWorkEntry.attackHttpParam, false);
         } else {
              BurpCallbacks.getInstance().print("initAttackHttpMessage: changeValue: error");
              return null;
@@ -115,17 +114,27 @@ public abstract class AttackI {
         switch (attackWorkEntry.insertPosition) {
             case LEFT:
                 changeParam.changeValue(attackVectorString + changeParam.getValue());
+                changeParam.setRemove(false);
                 break;
             case RIGHT:
                 changeParam.changeValue(changeParam.getValue() + attackVectorString);
+                changeParam.setRemove(false);
                 break;
             case REPLACE:
                 changeParam.changeValue(attackVectorString);
+                changeParam.setRemove(false);
                 break;
+            case REMOVE:
+                changeParam.changeValue(attackVectorString);
+                changeParam.setRemove(true);
             default:
                 return null;
         }
 
+        if(isRemove) {
+            changeParam.changeValue(attackVectorString);
+            changeParam.setRemove(true);
+        }
         // Apply changeparam
         newHttpMessage.getReq().setChangeParam(changeParam);
         boolean ret = newHttpMessage.getReq().applyChangeParam();
@@ -151,14 +160,14 @@ public abstract class AttackI {
     }
     
     
-    protected SentinelHttpMessageAtk attack(AttackData data) throws ConnectionTimeoutException {
+    protected SentinelHttpMessageAtk attack(AttackData data, boolean removeOrReplace) throws ConnectionTimeoutException {
         if (attackWorkEntry.attackHttpParam.getTypeStr().equals("GET") 
                 || attackWorkEntry.attackHttpParam.getTypeStr().equals("PATH")) 
         {
             data.urlEncode();
         }
         
-        SentinelHttpMessageAtk httpMessage = initAttackHttpMessage(data.getInput(), getAtkName(), getState());
+        SentinelHttpMessageAtk httpMessage = initAttackHttpMessage(data.getInput(), getAtkName(), getState(), removeOrReplace);
         if (httpMessage == null) {
             BurpCallbacks.getInstance().print("attack: Httpmessage is null");
             return null;

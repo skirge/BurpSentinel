@@ -46,7 +46,7 @@ public class PanelLeftInsertions extends JButton implements ActionListener {
     public static enum InsertPositions {
         REPLACE,
         LEFT,
-        RIGHT,};
+        RIGHT, REMOVE,};
     private PanelLeftInsertions.InsertPositions optionInsertPosition;
 
     public PanelLeftInsertions() {

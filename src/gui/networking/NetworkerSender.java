@@ -16,15 +16,9 @@
  */
 package gui.networking;
 
+import attacks.*;
 import attacks.model.AttackI;
-import attacks.AttackList;
 import attacks.model.AttackMain;
-import attacks.AttackOriginal;
-import attacks.AttackCommand;
-import attacks.AttackSqlExtended;
-import attacks.AttackTemplate;
-import attacks.AttackXss;
-import attacks.AttackXssLessThan;
 import model.SentinelHttpMessageAtk;
 import util.BurpCallbacks;
 
@@ -86,6 +80,9 @@ public class NetworkerSender {
                 break;
             case XSSLESSTHAN:
                 attack = new AttackXssLessThan(work);
+                break;
+            case JSON:
+                attack = new AttackJSONInjection(work);
                 break;
             default:
                 BurpCallbacks.getInstance().print("Error, unknown attack type: " + attackType);

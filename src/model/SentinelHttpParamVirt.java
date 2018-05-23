@@ -39,15 +39,15 @@ public class SentinelHttpParamVirt extends SentinelHttpParam {
     
     private EncoderType encoderType;
     
-    public SentinelHttpParamVirt(SentinelHttpParam parentParam, EncoderType type) {
-        super(parentParam);
+    public SentinelHttpParamVirt(SentinelHttpParam parentParam, EncoderType type, boolean isRemove) {
+        super(parentParam, isRemove );
         
         this.encoderType = type;
         this.parentParam = parentParam;
     }
     
-    public SentinelHttpParamVirt(SentinelHttpParamVirt virt) {
-        super(virt);
+    public SentinelHttpParamVirt(SentinelHttpParamVirt virt, boolean isRemove) {
+        super(virt, isRemove);
         this.encoderType = virt.encoderType;
         this.parentParam = virt.parentParam;
     }

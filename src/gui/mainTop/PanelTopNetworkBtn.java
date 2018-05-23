@@ -41,6 +41,9 @@ public class PanelTopNetworkBtn extends JToggleButton implements Observer {
             Signal signal = (Signal) arg;
             
             switch(signal) {
+                case START:
+                    this.setText("Start...");
+                    break;
                 case RECV:
                     this.setText("Recv..");
                     break;
@@ -53,7 +56,6 @@ public class PanelTopNetworkBtn extends JToggleButton implements Observer {
                 case CANCEL:
                     this.setText("Cancel..");
                     break;
-                    
                 default:
                     this.setText("Network");
                     break;                    

@@ -33,6 +33,7 @@ public class AttackMain {
         LIST,
         XSSLESSTHAN,
         TMPL,
+        JSON;
     };
     
     static private AttackMain attackMain;
@@ -53,6 +54,7 @@ public class AttackMain {
             AttackMain.AttackTypes.XSSLESSTHAN,
             AttackMain.AttackTypes.SQLE,
             AttackMain.AttackTypes.CMD,
+            AttackMain.AttackTypes.JSON
         };
     
     private AttackMain() {
@@ -61,8 +63,9 @@ public class AttackMain {
         attackList.add(new AttackDescription(AttackTypes.XSS, "Cross-Site Scripting with small and smart payloads"));
         attackList.add(new AttackDescription(AttackTypes.XSSLESSTHAN, "Different encodings for '>' to check for XSS"));
         attackList.add(new AttackDescription(AttackTypes.SQLE, "SQL injections with small and smart payloads"));
-        attackList.add(new AttackDescription(AttackTypes.CMD, "Comamnd injection with delays"));
+        attackList.add(new AttackDescription(AttackTypes.CMD, "Command injection with delays"));
         attackList.add(new AttackDescription(AttackTypes.TMPL, "Template injection"));
+        attackList.add(new AttackDescription(AttackTypes.JSON, "JSON Injection"));
     }
     
 

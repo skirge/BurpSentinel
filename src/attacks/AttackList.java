@@ -81,7 +81,7 @@ public class AttackList extends AttackI {
         atkData = new AttackData(state, data, XssIndicator.getInstance().getIndicator(), AttackData.AttackResultType.INFO);
                 
         try {
-            httpMessage = attack(atkData);
+            httpMessage = attack(atkData, false);
             if (httpMessage == null) {
                 return false;
             }

@@ -57,7 +57,7 @@ public class AttackOriginal extends AttackI {
     @Override
     public boolean performNextAttack() {
         try {
-            SentinelHttpMessageAtk httpMessage = initAttackHttpMessage(attackWorkEntry.attackHttpParam.getValue(), getAtkName(), getState());
+            SentinelHttpMessageAtk httpMessage = initAttackHttpMessage(attackWorkEntry.attackHttpParam.getValue(), getAtkName(), getState(), false);
             if (httpMessage == null) {
                return false;
             }

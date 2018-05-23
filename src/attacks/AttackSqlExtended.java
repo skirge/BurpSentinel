@@ -256,7 +256,7 @@ public class AttackSqlExtended extends AttackI {
         atkData = new AttackData(state, data, "", AttackData.AttackResultType.INFO);
         
         try {
-            httpMessage = attack(atkData);
+            httpMessage = attack(atkData, false);
             if (httpMessage == null) {
                 BurpCallbacks.getInstance().getBurp().printOutput("HTTPMESSAGE NULL");
                 return false;

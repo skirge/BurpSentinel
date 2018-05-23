@@ -105,7 +105,7 @@ public class AttackXss extends AttackI {
         }
         
         try {
-            httpMessage = attack(data);
+            httpMessage = attack(data, false);
             if (httpMessage == null) {
                 BurpCallbacks.getInstance().print("performNextAttack: httpmsg is null");
                 return false;
