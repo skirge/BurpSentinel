@@ -22,10 +22,8 @@ import gui.networking.AttackWorkEntry;
 import java.awt.Color;
 import java.util.LinkedList;
 import model.ResponseHighlight;
-import model.SentinelHttpMessage;
 import model.SentinelHttpMessageAtk;
 import model.XssIndicator;
-import org.w3c.tidy.TidyMessage;
 import util.BurpCallbacks;
 import util.ConnectionTimeoutException;
 
@@ -53,7 +51,7 @@ public class AttackTemplate extends AttackI {
         attackData.add(new AttackData(2, indicator + "${7*7}", indicator + "49", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(3, indicator + "{{1*'1'}}", indicator + "1", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(4, indicator + "a{*comment*}b", indicator + "ab", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(5, indicator + "${\"z\".join(\"ab\")", indicator + "zab", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(5, indicator + "${\"z\".join(\"ab\")}", indicator + "zab", AttackData.AttackResultType.VULNSURE));
     }
     
     @Override
@@ -81,7 +79,7 @@ public class AttackTemplate extends AttackI {
         AttackData data = attackData.get(state);
         SentinelHttpMessageAtk httpMessage;
         try {
-            httpMessage = attack(data);
+            httpMessage = attack(data, false);
             if (httpMessage == null) {
                 return false;
             }
