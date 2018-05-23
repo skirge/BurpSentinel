@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import model.SentinelHttpMessageAtk;
 import util.BurpCallbacks;
 import util.ConnectionTimeoutException;
-import util.Utility;
 
 /**
  *
@@ -48,6 +47,9 @@ public class AttackCommand extends AttackI {
         attackData.add(new AttackData(5, "& ping -c 10 127.0.0.1", "", AttackData.AttackResultType.VULNUNSURE));
         attackData.add(new AttackData(6, "\" & ping -c 10 127.0.0.1", "", AttackData.AttackResultType.VULNUNSURE));
         attackData.add(new AttackData(7,  "' & ping -c 10 127.0.0.1", "", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(8,  "\".sleep(10).\"", "", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(9,  "\".`sleep 10`.\"", "", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(10,  "{${sleep(10)}}", "", AttackData.AttackResultType.VULNUNSURE));
     }
     
     @Override
@@ -117,7 +119,7 @@ public class AttackCommand extends AttackI {
         atkData = getData(attackWorkEntry);
         
         try {
-            httpMessage = attack(atkData);
+            httpMessage = attack(atkData, false);
             if (httpMessage == null) {
                 return false;
             }
