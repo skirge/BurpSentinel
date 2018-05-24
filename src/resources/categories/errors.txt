@@ -41,3 +41,4 @@ Caused by:
 expects parameter 
 on line 
 /var/www/
+at.*\(.*/node_modules/
