@@ -47,11 +47,20 @@ public class AttackTemplate extends AttackI {
         indicator = XssIndicator.getInstance().getIndicator();
         
         attackData.add(new AttackData(0, indicator, indicator, AttackData.AttackResultType.STATUSGOOD));
-        attackData.add(new AttackData(1, indicator + "{{7*7}}", indicator + "49", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(2, indicator + "${7*7}", indicator + "49", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(1, indicator + "{{777-111}}", indicator + "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(2, indicator + "${777-111}", indicator + "666", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(3, indicator + "{{1*'1'}}", indicator + "1", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(4, indicator + "a{*comment*}b", indicator + "ab", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(5, indicator + "${\"z\".join(\"ab\")}", indicator + "zab", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(6, "cos.constructor(\"return \\\"" + indicator + "\\\"\")()", indicator, AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(7, "concat.constructor(\"return 777-111\")()", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(8, indicator + "#{777-111}", indicator + "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(9, "= 777-111", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(10, "{{777-111}}", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(11, "${777-111}", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(12, "a{*comment*}bcd", "abcd", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(13, "${\"z\".join(\"abcd\")}", indicator + "zabcd", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(14, "#{777-111}", "666", AttackData.AttackResultType.VULNSURE));
     }
     
     @Override
@@ -81,6 +90,7 @@ public class AttackTemplate extends AttackI {
         try {
             httpMessage = attack(data, false);
             if (httpMessage == null) {
+                state++;
                 return false;
             }
         } catch (ConnectionTimeoutException ex) {
@@ -90,16 +100,8 @@ public class AttackTemplate extends AttackI {
  
         analyzeResponse(data, httpMessage);
 
-        
-        switch (state) {
-            case 0:
-                break;
-            case 5:
-                doContinue = false;
-                break;
-            default:
-                doContinue = true;
-                break;
+        if(state >= attackData.size()-1) {
+            doContinue = false;
         }
         
         state++;
