@@ -54,7 +54,7 @@ public class AttackJSONInjection extends AttackI {
         attackData.add(new AttackData(4, "\"test\"", "\"test\"", AttackData.AttackResultType.VULNUNSURE));
         attackData.add(new AttackData(5, "{\"@class\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNUNSURE));
         attackData.add(new AttackData(6, "{\"java.io.IOException\":\"test\"}","Exception", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(7, "[\"java.io.IOException\",\"test\"","Exception", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(7, "[\"java.io.IOException\",\"test\"]","Exception", AttackData.AttackResultType.VULNUNSURE));
         attackData.add(new AttackData(8, "{\"@c\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNUNSURE));
         attackData.add(new AttackData(9, "{\"@type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNUNSURE));
         attackData.add(new AttackData(10, "{\"preferredClass\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNUNSURE));
