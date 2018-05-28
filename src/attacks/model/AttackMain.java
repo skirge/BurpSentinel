@@ -33,7 +33,8 @@ public class AttackMain {
         LIST,
         XSSLESSTHAN,
         TMPL,
-        JSON;
+        JSON,
+        REGEX;
     };
     
     static private AttackMain attackMain;
@@ -54,7 +55,8 @@ public class AttackMain {
             AttackMain.AttackTypes.XSSLESSTHAN,
             AttackMain.AttackTypes.SQLE,
             AttackMain.AttackTypes.CMD,
-            AttackMain.AttackTypes.JSON
+            AttackMain.AttackTypes.JSON,
+            AttackTypes.REGEX
         };
     
     private AttackMain() {
@@ -66,6 +68,7 @@ public class AttackMain {
         attackList.add(new AttackDescription(AttackTypes.CMD, "Command injection with delays"));
         attackList.add(new AttackDescription(AttackTypes.TMPL, "Template injection"));
         attackList.add(new AttackDescription(AttackTypes.JSON, "JSON Injection"));
+        attackList.add(new AttackDescription(AttackTypes.REGEX, "Regular Expression Injection"));
     }
     
 
