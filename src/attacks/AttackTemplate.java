@@ -61,6 +61,10 @@ public class AttackTemplate extends AttackI {
         attackData.add(new AttackData(12, "a{*comment*}bcd", "abcd", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(13, "${\"z\".join(\"abcd\")}", indicator + "zabcd", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(14, "#{777-111}", "666", AttackData.AttackResultType.VULNSURE));
+		attackData.add(new AttackData(15, "666+0", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(16, "666-0", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(17, "666/1", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(18, "666*1", "666", AttackData.AttackResultType.VULNSURE));
     }
     
     @Override
