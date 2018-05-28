@@ -17,6 +17,7 @@
 package gui.networking;
 
 import attacks.*;
+import attacks.AttackRegex;
 import attacks.model.AttackI;
 import attacks.model.AttackMain;
 import model.SentinelHttpMessageAtk;
@@ -83,6 +84,9 @@ public class NetworkerSender {
                 break;
             case JSON:
                 attack = new AttackJSONInjection(work);
+                break;
+            case REGEX:
+                attack = new AttackRegex(work);
                 break;
             default:
                 BurpCallbacks.getInstance().print("Error, unknown attack type: " + attackType);
