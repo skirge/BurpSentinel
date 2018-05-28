@@ -27,7 +27,12 @@ import model.ResponseHighlight;
 import model.SentinelHttpMessage;
 import model.SentinelHttpMessageAtk;
 import model.XssIndicator;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
+import org.apache.commons.lang3.text.translate.EntityArrays;
+import org.apache.commons.lang3.text.translate.LookupTranslator;
+import org.apache.commons.lang3.text.translate.UnicodeEscaper;
 import org.w3c.tidy.TidyMessage;
 import util.BurpCallbacks;
 import util.ConnectionTimeoutException;
@@ -40,6 +45,8 @@ public class AttackJSONInjection extends AttackI {
     private final Color failColor = new Color(0xff, 0xcc, 0xcc, 100);
     private LinkedList<AttackData> attackData;
 
+    public static final CharSequenceTranslator ESCAPE_UNICODE = new UnicodeEscaper();
+
     private int state = 0;
 
     public AttackJSONInjection(AttackWorkEntry work) {
@@ -47,21 +54,25 @@ public class AttackJSONInjection extends AttackI {
 
         attackData = new LinkedList<AttackData>();
 
-        attackData.add(new AttackData(0, "[]",  "[]", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(1, "{}",  "{}", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(2, "1",  "1", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(3, "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",  "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(4, "\"test\"", "\"test\"", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(5, "{\"@class\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(6, "{\"java.io.IOException\":\"test\"}","Exception", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(7, "[\"java.io.IOException\",\"test\"]","Exception", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(8, "{\"@c\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(9, "{\"@type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(10, "{\"preferredClass\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(11, "{\"$type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(12, "{\"__type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(13, "{\"__record\":\"Map\"}","Exception", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(14, "{\"__iterable\":\"Map\"}","Exception", AttackData.AttackResultType.VULNUNSURE));
+        String indicator = XssIndicator.getInstance().getIndicator();
+
+        attackData.add(new AttackData(0, indicator,indicator, AttackData.AttackResultType.STATUSGOOD));
+        attackData.add(new AttackData(1, "\"" + ESCAPE_UNICODE.translate(indicator) + "\"",indicator, AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(2, "[]",  "[]", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(3, "{}",  "{}", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(4, "1",  "1", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(5, "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",  "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(6, "\"test\"", "test", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(7, "{\"@class\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(8, "{\"java.io.IOException\":\"test\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(9, "[\"java.io.IOException\",\"test\"]","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(10, "{\"@c\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(11, "{\"@type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(12, "{\"preferredClass\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(13, "{\"$type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(14, "{\"__type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(15, "{\"__record\":\"Map\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(16, "{\"__iterable\":\"Map\"}","Exception", AttackData.AttackResultType.VULNSURE));
     }
 
     @Override
@@ -94,6 +105,7 @@ public class AttackJSONInjection extends AttackI {
             if (httpMessage == null) {
                 doContinue = false;
             }
+            analyzeResponse(data, httpMessage);
         } catch (ConnectionTimeoutException ex) {
             BurpCallbacks.getInstance().print("Connection timeout: " + ex.getLocalizedMessage());
             doContinue = false;
@@ -107,5 +119,14 @@ public class AttackJSONInjection extends AttackI {
         return doContinue;
     }
 
+
+    private void analyzeResponse(AttackData data, SentinelHttpMessageAtk httpMessage) {
+        // Highlight indicator anyway
+        String indicator = XssIndicator.getInstance().getBaseIndicator();
+        if (! indicator.equals(data.getOutput())) {
+            ResponseHighlight h = new ResponseHighlight(indicator, Color.green);
+            httpMessage.getRes().addHighlight(h);
+        }
+    }
 
 }
