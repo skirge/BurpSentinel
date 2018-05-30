@@ -65,6 +65,7 @@ public class AttackTemplate extends AttackI {
         attackData.add(new AttackData(16, "666-0", "666", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(17, "666/1", "666", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(18, "666*1", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(19, "#set( $string = \"This is string\" )\r\n$string.class", "java.lang.String",AttackData.AttackResultType.VULNSURE));
     }
     
     @Override
