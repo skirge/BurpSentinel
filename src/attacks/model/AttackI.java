@@ -162,7 +162,8 @@ public abstract class AttackI {
     
     protected SentinelHttpMessageAtk attack(AttackData data, boolean removeOrReplace) throws ConnectionTimeoutException {
         if (attackWorkEntry.attackHttpParam.getTypeStr().equals("GET") 
-                || attackWorkEntry.attackHttpParam.getTypeStr().equals("PATH")) 
+                || attackWorkEntry.attackHttpParam.getTypeStr().equals("PATH")
+                || attackWorkEntry.attackHttpParam.getTypeStr().equals("POST"))
         {
             data.urlEncode();
         }
