@@ -34,7 +34,8 @@ public class AttackMain {
         XSSLESSTHAN,
         TMPL,
         JSON,
-        REGEX;
+        REGEX,
+        BACKSLASH;
     };
     
     static private AttackMain attackMain;
@@ -69,6 +70,7 @@ public class AttackMain {
         attackList.add(new AttackDescription(AttackTypes.TMPL, "Template injection"));
         attackList.add(new AttackDescription(AttackTypes.JSON, "JSON Injection"));
         attackList.add(new AttackDescription(AttackTypes.REGEX, "Regular Expression Injection"));
+        attackList.add(new AttackDescription(AttackTypes.BACKSLASH, "Backslash payloads"));
     }
     
 

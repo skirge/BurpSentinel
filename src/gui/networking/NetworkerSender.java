@@ -88,6 +88,9 @@ public class NetworkerSender {
             case REGEX:
                 attack = new AttackRegex(work);
                 break;
+            case BACKSLASH:
+                attack = new AttackBackslash(work);
+                break;
             default:
                 BurpCallbacks.getInstance().print("Error, unknown attack type: " + attackType);
                 return false;
