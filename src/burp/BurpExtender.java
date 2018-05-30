@@ -87,7 +87,7 @@ public class BurpExtender implements IExtensionStateListener {
                 
                 //sentinelMainUi.initTestMessages();
                 
-                BurpCallbacks.getInstance().print("Sentinel v0.9 - Nov 2016");
+                BurpCallbacks.getInstance().print("Sentinel v1.1 - May 2018");
             }
         });
     }
