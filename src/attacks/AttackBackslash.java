@@ -35,6 +35,28 @@ public class AttackBackslash extends AttackI {
     private final Color failColor = new Color(0xff, 0xcc, 0xcc, 100);
     private final char[] specialCharacters = {' ','!','"','#','$','%','&','(',')','*','+',',','-','.','/',':',';','<',
             '=','>','?','@','[','\\',']','^','_','`','{','|','}','~','\'','t','b','r','n','f','0','1','2','u','o','x' };
+
+    private final String[] singleLineComments = {
+            "#", "//", "-- ", ";", "%", "'", "\"", "\\", "!", "*"
+    };
+
+    private final String[] multilineComments = {
+            "/*test*/","(*test*)","%(test)%", "{test}", "{-test-}","#|test|#","#=test=#", "#[test]#","--[[test]]",
+            "<!--test-->"
+    };
+
+    private final String[] concatenation = {
+            "+",".","&","||","//","~","<>","..",":","^","++","$+",","
+    };
+
+    private final String[] stringDelimiters = {
+            "","\"","'","'''","]]","`"
+    };
+
+    private final String[] numericInjections = {
+            "+0","-0","/1","*1"," sum 0"," difference 0"," product 1"," add 0"," sub 0"," mul 1"," div 1"," idiv 1",
+            "**1","^1","|0"
+    };
     private LinkedList<AttackData> attackData;
 
     private int state = 0;
@@ -43,18 +65,47 @@ public class AttackBackslash extends AttackI {
         super(work);
 
         attackData = new LinkedList<AttackData>();
-        String indicator;
+        String indicator = attackWorkEntry.attackHttpParam.getDecodedValue();
+        int attackIndex = 0;
 
-        indicator = XssIndicator.getInstance().getIndicator();
-
-        attackData.add(new AttackData(0, indicator, indicator, AttackData.AttackResultType.STATUSGOOD));
-        for(int i=1;i<specialCharacters.length;i++) {
+        attackData.add(new AttackData(attackIndex++, indicator, indicator, AttackData.AttackResultType.STATUSGOOD));
+        for(int i=0;i<specialCharacters.length;i++) {
             char special = specialCharacters[i];
-
-            attackData.add(new AttackData(1, indicator + special, indicator + special, AttackData.AttackResultType.VULNUNSURE));
-            attackData.add(new AttackData(2, indicator + "\\" + special, indicator + special, AttackData.AttackResultType.VULNSURE));
-            attackData.add(new AttackData(3, indicator + "\\\\" + special, indicator + "\\" + special, AttackData.AttackResultType.VULNSURE));
+            attackData.add(new AttackData(attackIndex++, indicator + special, indicator + special,
+                    AttackData.AttackResultType.VULNUNSURE));
+            attackData.add(new AttackData(attackIndex++, indicator + "\\" + special, indicator + special,
+                    AttackData.AttackResultType.VULNSURE));
+            attackData.add(new AttackData(attackIndex++, indicator + "\\\\" + special, indicator + "\\" + special,
+                    AttackData.AttackResultType.VULNSURE));
         }
+
+        for(int i = 0; i<stringDelimiters.length;i++) {
+            for(int j = 0; j<singleLineComments.length;j++) {
+                attackData.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + singleLineComments[j],
+                        indicator, AttackData.AttackResultType.VULNSURE));
+            }
+        }
+
+        for(int i = 0; i<stringDelimiters.length;i++) {
+            for(int j = 0; j<multilineComments.length;j++) {
+                attackData.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
+                        + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
+            }
+        }
+
+        for(int i = 0; i<stringDelimiters.length;i++) {
+            for(int j = 0; j<concatenation.length;j++) {
+                attackData.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + concatenation[j]
+                      + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
+            }
+        }
+
+        // TODO: only for numerical fields
+        for(int i=0;i<numericInjections.length;i++) {
+            attackData.add(new AttackData(attackIndex++, indicator + numericInjections[i], indicator,
+                    AttackData.AttackResultType.VULNUNSURE));
+        }
+
     }
 
     @Override

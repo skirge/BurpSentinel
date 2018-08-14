@@ -314,7 +314,7 @@ public class SentinelHttpRequest implements Serializable {
                 fix = 1;
             r.replace(origParam.getValueStart() - fix, origParam.getValueEnd()+fix, changeParam.getValue());
         } else { // replace
-            String encoded = StringEscapeUtils.escapeEcmaScript(changeParam.getValue());
+            String encoded = StringEscapeUtils.escapeJava(changeParam.getValue());
             r.replace(origParam.getValueStart(), origParam.getValueEnd(), encoded);
         }
         // rebuild request and recalculate Content-Length
