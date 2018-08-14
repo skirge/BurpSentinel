@@ -7,13 +7,17 @@ public class AttackParamTransform {
     php like transformations
     param=12345 =>
     param (null)
-        param= (no value)
+    param= (no value)
     param[]= (array)
     param[0] (array)
     input['param'] (array)
 
-    param=1&param[]=2 (different types, duplicate)
+    param=orig&param[]=attackstring (different types, duplicate)
 
-    param{} (hash?)
+    param{}= (hash? is that possible?)
+
+    for value = value
+    param=val&param=ue (HPP)
+
     */
 }
