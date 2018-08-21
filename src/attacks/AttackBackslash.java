@@ -57,6 +57,11 @@ public class AttackBackslash extends AttackI {
             "+0","-0","/1","*1"," sum 0"," difference 0"," product 1"," add 0"," sub 0"," mul 1"," div 1"," idiv 1",
             "**1","^1","|0"
     };
+
+    private final String[] commandSeparators = {
+            ";",",",":","\n","\r","\r\n","\u0008","\u0009"
+    };
+
     private LinkedList<AttackData> attackData;
 
     private int state = 0;
@@ -90,6 +95,8 @@ public class AttackBackslash extends AttackI {
             for(int j = 0; j<multilineComments.length;j++) {
                 attackData.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
                         + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
+                attackData.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
+                        , indicator, AttackData.AttackResultType.VULNSURE));
             }
         }
 
@@ -99,6 +106,12 @@ public class AttackBackslash extends AttackI {
                       + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
             }
         }
+
+        for(int i = 0; i<commandSeparators.length;i++) {
+            attackData.add(new AttackData(attackIndex++, indicator + commandSeparators[i] + indicator, indicator, AttackData.AttackResultType.VULNSURE));
+        }
+        // duplicated value
+        attackData.add(new AttackData(attackIndex++, indicator + ";" + indicator, indicator, AttackData.AttackResultType.VULNSURE));
 
         // TODO: only for numerical fields
         for(int i=0;i<numericInjections.length;i++) {
