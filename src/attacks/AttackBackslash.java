@@ -34,10 +34,12 @@ import util.ConnectionTimeoutException;
 public class AttackBackslash extends AttackI {
     private final Color failColor = new Color(0xff, 0xcc, 0xcc, 100);
     private final char[] specialCharacters = {' ','!','"','#','$','%','&','(',')','*','+',',','-','.','/',':',';','<',
-            '=','>','?','@','[','\\',']','^','_','`','{','|','}','~','\'','t','b','r','n','f','0','1','2','u','o','x' };
+            '=','>','?','@','[','\\',']','^','_','`','{','|','}','~','\'','t','b','r','n','f','0','1','2','u','o','x',
+            '\r','\n'
+    };
 
     private final String[] singleLineComments = {
-            "#", "//", "-- ", ";", "%", "'", "\"", "\\", "!", "*"
+            "#", "//", "-- ", ";", "%", "'", "\"", "\\", "!", "*","\r","\n","\r\n"
     };
 
     private final String[] multilineComments = {
@@ -46,7 +48,7 @@ public class AttackBackslash extends AttackI {
     };
 
     private final String[] concatenation = {
-            "+",".","&","||","//","~","<>","..",":","^","++","$+",","
+            "+",".","&","||","//","~","<>","..",":","^","++","$+",",","\r","\n","\r\n"
     };
 
     private final String[] stringDelimiters = {
@@ -59,7 +61,7 @@ public class AttackBackslash extends AttackI {
     };
 
     private final String[] commandSeparators = {
-            ";",",",":","\n","\r","\r\n","\u0008","\u0009"
+            ";",",",":","\n","\r","\r\n","\u0008","\u0009","\r","\n","\r\n"
     };
 
     private LinkedList<AttackData> attackData;
