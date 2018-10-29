@@ -18,9 +18,15 @@ package attacks;
 
 import attacks.model.AttackData;
 import attacks.model.AttackI;
+import attacks.model.AttackResult;
 import gui.networking.AttackWorkEntry;
 import java.awt.Color;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
+
 import model.ResponseHighlight;
 import model.SentinelHttpMessageAtk;
 import model.XssIndicator;
@@ -33,35 +39,39 @@ import util.ConnectionTimeoutException;
  */
 public class AttackBackslash extends AttackI {
     private final Color failColor = new Color(0xff, 0xcc, 0xcc, 100);
-    private final char[] specialCharacters = {' ','!','"','#','$','%','&','(',')','*','+',',','-','.','/',':',';','<',
+    private static final char[] specialCharacters = {' ','!','"','#','$','%','&','(',')','*','+',',','-','.','/',':',';','<',
             '=','>','?','@','[','\\',']','^','_','`','{','|','}','~','\'','t','b','r','n','f','0','1','2','u','o','x',
             '\r','\n'
     };
 
-    private final String[] singleLineComments = {
+    private static final String[] singleLineComments = {
             "#", "//", "-- ", ";", "%", "'", "\"", "\\", "!", "*","\r","\n","\r\n"
     };
 
-    private final String[] multilineComments = {
+    private static final String[] multilineComments = {
             "/*test*/","(*test*)","%(test)%", "{test}", "{-test-}","#|test|#","#=test=#", "#[test]#","--[[test]]",
             "<!--test-->"
     };
 
-    private final String[] concatenation = {
-            "+",".","&","||","//","~","<>","..",":","^","++","$+",",","\r","\n","\r\n"
+    private static final String[] concatenation = {
+            " ","+",".","&","||","//","~","<>","..",":","^","++","$+",",","\r","\n","\r\n"
     };
 
-    private final String[] stringDelimiters = {
-            "","\"","'","'''","]]","`"
+    private static final String[] stringDelimiters = {
+            "","\"","'","'''","]]","`","\r","\n","\r\n",
+            "%E5%98%8A","%0A","\u560a",
+            "%E5%98%8D","%0D","\u560d",
+            "%E5%98%BE","%3E","\u563e",
+            "%E5%98%BC","%3C","\u563c"
     };
 
-    private final String[] numericInjections = {
+    private static final String[] numericInjections = {
             "+0","-0","/1","*1"," sum 0"," difference 0"," product 1"," add 0"," sub 0"," mul 1"," div 1"," idiv 1",
-            "**1","^1","|0"
+            "**1","^1","|0","$ne","$gt","$lt","$eq"
     };
 
-    private final String[] commandSeparators = {
-            ";",",",":","\n","\r","\r\n","\u0008","\u0009","\r","\n","\r\n"
+    private static final String[] commandSeparators = {
+            ";",",",":","\n","\r","\r\n","\u0008","\u0009","\r","\n","\r\n","&&","||","&","|"
     };
 
     private LinkedList<AttackData> attackData;
@@ -73,54 +83,58 @@ public class AttackBackslash extends AttackI {
 
         attackData = new LinkedList<AttackData>();
         String indicator = attackWorkEntry.attackHttpParam.getDecodedValue();
+        attackData.addAll(generateAttackData(indicator));
+    }
+
+    private static Collection<? extends AttackData> generateAttackData(String indicator) {
+        List attacks = new LinkedList<AttackData>();
+
         int attackIndex = 0;
 
-        attackData.add(new AttackData(attackIndex++, indicator, indicator, AttackData.AttackResultType.STATUSGOOD));
-        for(int i=0;i<specialCharacters.length;i++) {
-            char special = specialCharacters[i];
-            attackData.add(new AttackData(attackIndex++, indicator + special, indicator + special,
-                    AttackData.AttackResultType.VULNUNSURE));
-            attackData.add(new AttackData(attackIndex++, indicator + "\\" + special, indicator + special,
-                    AttackData.AttackResultType.VULNSURE));
-            attackData.add(new AttackData(attackIndex++, indicator + "\\\\" + special, indicator + "\\" + special,
-                    AttackData.AttackResultType.VULNSURE));
+        attacks.add(new AttackData(attackIndex++, indicator, indicator, AttackData.AttackResultType.STATUSGOOD));
+
+        for(int i=0; i<specialCharacters.length; i++) {
+            for(int j = 0; j<specialCharacters.length; j++) {
+                attacks.add(new AttackData(attackIndex++,indicator + specialCharacters[i] + specialCharacters[j],
+                        indicator,AttackData.AttackResultType.VULNUNSURE));
+                attacks.add(new AttackData(attackIndex++, indicator + "\\" + specialCharacters[i] + specialCharacters[j],
+                        indicator + specialCharacters[i],
+                        AttackData.AttackResultType.VULNSURE));
+                attacks.add(new AttackData(attackIndex++, indicator + "\\\\" + specialCharacters[i] + specialCharacters[j],
+                        indicator + "\\" + specialCharacters[i],
+                        AttackData.AttackResultType.VULNSURE));
+            }
         }
 
         for(int i = 0; i<stringDelimiters.length;i++) {
             for(int j = 0; j<singleLineComments.length;j++) {
-                attackData.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + singleLineComments[j],
+                attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + singleLineComments[j],
                         indicator, AttackData.AttackResultType.VULNSURE));
             }
         }
 
         for(int i = 0; i<stringDelimiters.length;i++) {
             for(int j = 0; j<multilineComments.length;j++) {
-                attackData.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
+                attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
                         + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
-                attackData.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
+                attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
                         , indicator, AttackData.AttackResultType.VULNSURE));
             }
         }
 
         for(int i = 0; i<stringDelimiters.length;i++) {
             for(int j = 0; j<concatenation.length;j++) {
-                attackData.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + concatenation[j]
-                      + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
+                attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + concatenation[j]
+                        + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
             }
         }
 
-        for(int i = 0; i<commandSeparators.length;i++) {
-            attackData.add(new AttackData(attackIndex++, indicator + commandSeparators[i] + indicator, indicator, AttackData.AttackResultType.VULNSURE));
-        }
-        // duplicated value
-        attackData.add(new AttackData(attackIndex++, indicator + ";" + indicator, indicator, AttackData.AttackResultType.VULNSURE));
-
-        // TODO: only for numerical fields
         for(int i=0;i<numericInjections.length;i++) {
-            attackData.add(new AttackData(attackIndex++, indicator + numericInjections[i], indicator,
+            attacks.add(new AttackData(attackIndex++, indicator + numericInjections[i], indicator,
                     AttackData.AttackResultType.VULNUNSURE));
         }
 
+        return attacks;
     }
 
     @Override
@@ -142,6 +156,9 @@ public class AttackBackslash extends AttackI {
     @Override
     public boolean performNextAttack() {
         boolean doContinue = true;
+
+        if(attackData.isEmpty())
+            return false;
 
         BurpCallbacks.getInstance().print("A: " + state);
 
@@ -177,4 +194,17 @@ public class AttackBackslash extends AttackI {
         }
     }
 
+
+    public static void main(String[] args) throws  UnsupportedEncodingException {
+        Collection<? extends AttackData> attacks = generateAttackData("FUZZME");
+
+        attacks.stream().map(AttackData::getInput).map(s -> {
+            try {
+                return URLEncoder.encode(s,"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }).forEach(System.out::println);
+    }
 }
