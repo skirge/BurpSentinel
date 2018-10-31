@@ -61,7 +61,7 @@ public class AttackBackslash extends AttackI {
     };
 
     private final String[] commandSeparators = {
-            ";",",",":","\n","\r","\r\n","\u0008","\u0009","\r","\n","\r\n"
+            ";",",",":","\n","\r","\r\n","\u0008","\u0009","\r","\n","\r\n","\u001a"
     };
 
     private LinkedList<AttackData> attackData;
