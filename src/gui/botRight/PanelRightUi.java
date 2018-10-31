@@ -62,25 +62,25 @@ public class PanelRightUi extends javax.swing.JPanel {
         panelViewMessage.setTheme("right");
 
         int width = 60;
-        tableMessages.getColumnModel().getColumn(0).setMaxWidth(40);
+        tableMessages.getColumnModel().getColumn(0).setMaxWidth(2*40);
         tableMessages.getColumnModel().getColumn(0).setMinWidth(40);
 
-        tableMessages.getColumnModel().getColumn(1).setMaxWidth(width);
+        tableMessages.getColumnModel().getColumn(1).setMaxWidth(2*width);
         tableMessages.getColumnModel().getColumn(1).setMinWidth(width);
         
-        tableMessages.getColumnModel().getColumn(2).setMaxWidth(60);
+        tableMessages.getColumnModel().getColumn(2).setMaxWidth(2*60);
         tableMessages.getColumnModel().getColumn(2).setMinWidth(60);
         
-        tableMessages.getColumnModel().getColumn(6).setMaxWidth(width);
+        tableMessages.getColumnModel().getColumn(6).setMaxWidth(2*width);
         tableMessages.getColumnModel().getColumn(6).setMinWidth(width);
         
-        tableMessages.getColumnModel().getColumn(7).setMaxWidth(width+4);
+        tableMessages.getColumnModel().getColumn(7).setMaxWidth(2*(width+4));
         tableMessages.getColumnModel().getColumn(7).setMinWidth(width+4);
         
-        tableMessages.getColumnModel().getColumn(8).setMaxWidth(width);
+        tableMessages.getColumnModel().getColumn(8).setMaxWidth(2*width);
         tableMessages.getColumnModel().getColumn(8).setMinWidth(width);
         
-        tableMessages.getColumnModel().getColumn(9).setMaxWidth(width);
+        tableMessages.getColumnModel().getColumn(9).setMaxWidth(2*width);
         tableMessages.getColumnModel().getColumn(9).setMinWidth(width);
 
 
@@ -108,7 +108,8 @@ public class PanelRightUi extends javax.swing.JPanel {
                         currentSelectedRow = lsm.getMinSelectionIndex();
                         // Only update if differ
                         if (oldSelectedRow != currentSelectedRow) {
-                            viewHttpMessage(currentSelectedRow);
+                            int originalRow = tableMessages.convertRowIndexToModel(currentSelectedRow);
+                            viewHttpMessage(originalRow);
                             tableMessages.getSelectionModel().setSelectionInterval(currentSelectedRow, currentSelectedRow);
                         }
                     }

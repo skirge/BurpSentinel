@@ -76,13 +76,9 @@ public class PanelRightModel extends AbstractTableModel implements Observer {
         
     @Override
     public Class getColumnClass(int columnIndex) {
-        switch(columnIndex) {
-            case 0: return Integer.class;
-            case 6: return Integer.class;
-            case 7: return Integer.class;
-            case 9: return Integer.class;
-            default: return String.class;
-        }
+        if(messages.isEmpty())
+            return null;
+        return getValueAt(0, columnIndex).getClass();
     }
     
     
@@ -342,9 +338,9 @@ public class PanelRightModel extends AbstractTableModel implements Observer {
 
     
     public SentinelHttpMessageAtk getHttpMessage(int n) {
-        return messages.get(n);
+        return messages.stream().filter(m -> m.getTableIndexAttack() == n).findFirst().orElse(null);
     }
-    
+
     
     public LinkedList<SentinelHttpMessageAtk> getAllAttackMessages() {
         return (LinkedList<SentinelHttpMessageAtk>) messages.clone();
