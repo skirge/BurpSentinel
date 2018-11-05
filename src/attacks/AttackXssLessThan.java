@@ -22,6 +22,7 @@ import attacks.model.AttackData;
 import gui.networking.AttackWorkEntry;
 import model.ResponseHighlight;
 import java.awt.Color;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 
 import model.SentinelHttpMessageAtk;
@@ -156,8 +157,11 @@ public class AttackXssLessThan extends AttackI {
             state++;
             BurpCallbacks.getInstance().print("Connection timeout: " + ex.getLocalizedMessage());
             return false;
+        } catch (UnsupportedEncodingException e) {
+            state++;
+            BurpCallbacks.getInstance().print("Encoding error: " + e.getLocalizedMessage());
         }
-        
+
         state++;
         
         if (state >= attackDataXss.size()) {

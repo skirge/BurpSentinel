@@ -21,6 +21,7 @@ import attacks.model.AttackData;
 import gui.networking.AttackWorkEntry;
 import model.ResponseHighlight;
 import java.awt.Color;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import model.SentinelHttpMessageAtk;
 import model.XssIndicator;
@@ -110,14 +111,16 @@ public class AttackXss extends AttackI {
                 BurpCallbacks.getInstance().print("performNextAttack: httpmsg is null");
                 return false;
             }
+            analyzeResponse(data, httpMessage);
         } catch (ConnectionTimeoutException ex) {
             BurpCallbacks.getInstance().print("Connection timeout: " + ex.getLocalizedMessage());
             state++;
             return false;
+        } catch (UnsupportedEncodingException e) {
+            BurpCallbacks.getInstance().print("Encoding error: " + e.getLocalizedMessage());
         }
-        
-        analyzeResponse(data, httpMessage);
-        
+
+
         if (state == 11) {
             doContinue = false;
         }

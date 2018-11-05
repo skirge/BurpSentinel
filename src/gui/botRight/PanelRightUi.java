@@ -61,7 +61,7 @@ public class PanelRightUi extends javax.swing.JPanel {
         initComponents();
         panelViewMessage.setTheme("right");
 
-        int width = 60;
+        int width = 80;
         tableMessages.getColumnModel().getColumn(0).setMaxWidth(2*40);
         tableMessages.getColumnModel().getColumn(0).setMinWidth(40);
 

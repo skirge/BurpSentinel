@@ -19,13 +19,13 @@ package attacks;
 import attacks.model.AttackData;
 import attacks.model.AttackI;
 import attacks.model.AttackResult;
+import gui.categorizer.model.ResponseCategory;
 import gui.networking.AttackWorkEntry;
+
 import java.awt.Color;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import model.ResponseHighlight;
 import model.SentinelHttpMessageAtk;
@@ -38,10 +38,12 @@ import util.ConnectionTimeoutException;
  * @author dobin
  */
 public class AttackBackslash extends AttackI {
+    private static final String ATTACK_NAME = "BACKSLASH";
     private final Color failColor = new Color(0xff, 0xcc, 0xcc, 100);
-    private static final char[] specialCharacters = {' ','!','"','#','$','%','&','(',')','*','+',',','-','.','/',':',';','<',
-            '=','>','?','@','[','\\',']','^','_','`','{','|','}','~','\'','t','b','r','n','f','0','1','2','u','o','x',
-            '\r','\n'
+
+    private static final char[] specialCharacters = {' ', '!', '"', '#', '$', '%', '&', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<',
+            '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~', '\'', 't', 'b', 'r', 'n', 'f', '0', '1', '2', 'u', 'o', 'x', '\r', '\n',
+            '\u560a', '\u560d', '\u563e', '\u563c'
     };
 
     private static final String[] singleLineComments = {
@@ -54,92 +56,92 @@ public class AttackBackslash extends AttackI {
     };
 
     private static final String[] concatenation = {
-            " ","+",".","&","||","//","~","<>","..",":","^","++","$+",",","\r","\n","\r\n"
+            "", " ", "+", ".", "&", "||", "//", "~", "<>", "..", ":", "^", "++", "$+", ","
     };
 
     private static final String[] stringDelimiters = {
-            "","\"","'","'''","]]","`","\r","\n","\r\n",
-            "\u560a",
-            "\u560d",
-            "\u563e",
-            "\u563c"
+            "", "\"", "'", "'''", "]]", "`", "\r", "\n"
     };
 
     private static final String[] numericInjections = {
-            "+0","-0","/1","*1"," sum 0"," difference 0"," product 1"," add 0"," sub 0"," mul 1"," div 1"," idiv 1",
-            "**1","^1","|0","$ne","$gt","$lt","$eq"
+            "+0", "-0", "/1", "*1", " sum 0", " difference 0", " product 1", " add 0", " sub 0", " mul 1", " div 1", " idiv 1",
+            "**1", "^1", "|0", " $ne 0", " $gt 0", " $lt 0", " $eq 0"
     };
 
     private static final String[] commandSeparators = {
-            ";",",",":","\n","\r","\r\n","\u0008","\u0009","\r","\n","\r\n","&&","||","&","|","\u001a"
+            ";",",",":","\n","\r","\r\n","\u0008","\u0009","\r","\n","\r\n","&&","||","&","|","\u001a",">"
     };
 
     private LinkedList<AttackData> attackData;
 
     private int state = 0;
 
-    public AttackBackslash(AttackWorkEntry work) {
+    public AttackBackslash(AttackWorkEntry work, boolean allPayloads) {
         super(work);
 
         attackData = new LinkedList<AttackData>();
         String indicator = attackWorkEntry.attackHttpParam.getDecodedValue();
-        attackData.addAll(generateAttackData(indicator));
+        attackData.addAll(generateAttackData(indicator, allPayloads));
     }
 
-    private static Collection<? extends AttackData> generateAttackData(String indicator) {
+    private static Collection<? extends AttackData> generateAttackData(String indicator, boolean allPayloads) {
         List attacks = new LinkedList<AttackData>();
 
         int attackIndex = 0;
 
         attacks.add(new AttackData(attackIndex++, indicator, indicator, AttackData.AttackResultType.STATUSGOOD));
 
-        for(int i=0; i<specialCharacters.length; i++) {
-            for(int j = 0; j<specialCharacters.length; j++) {
-                attacks.add(new AttackData(attackIndex++,indicator + specialCharacters[i] + specialCharacters[j],
-                        indicator,AttackData.AttackResultType.VULNUNSURE));
-                attacks.add(new AttackData(attackIndex++, indicator + "\\" + specialCharacters[i] + specialCharacters[j],
-                        indicator + specialCharacters[i],
-                        AttackData.AttackResultType.VULNSURE));
-                attacks.add(new AttackData(attackIndex++, indicator + "\\\\" + specialCharacters[i] + specialCharacters[j],
-                        indicator + "\\" + specialCharacters[i],
-                        AttackData.AttackResultType.VULNSURE));
+        if (allPayloads) {
+            for (int i = 0; i < specialCharacters.length; i++) {
+                for (int j = 0; j < specialCharacters.length; j++) {
+                    attacks.add(new AttackData(attackIndex++, indicator + specialCharacters[i] + specialCharacters[j],
+                            indicator, AttackData.AttackResultType.VULNUNSURE));
+                    attacks.add(new AttackData(attackIndex++, indicator + "\\" + specialCharacters[i] + specialCharacters[j],
+                            indicator + specialCharacters[i],
+                            AttackData.AttackResultType.VULNSURE));
+                    attacks.add(new AttackData(attackIndex++, indicator + "\\\\" + specialCharacters[i] + specialCharacters[j],
+                            indicator + "\\" + specialCharacters[i],
+                            AttackData.AttackResultType.VULNSURE));
+                }
             }
-        }
+        } else {
 
-        for(int i = 0; i<stringDelimiters.length;i++) {
-            for(int j = 0; j<singleLineComments.length;j++) {
-                attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + singleLineComments[j],
-                        indicator, AttackData.AttackResultType.VULNSURE));
+            for (int i = 0; i < stringDelimiters.length; i++) {
+                for (int j = 0; j < singleLineComments.length; j++) {
+                    attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + singleLineComments[j],
+                            indicator, AttackData.AttackResultType.VULNSURE));
+                }
             }
-        }
 
-        for(int i = 0; i<stringDelimiters.length;i++) {
-            for(int j = 0; j<multilineComments.length;j++) {
-                attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
-                        + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
-                attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
-                        , indicator, AttackData.AttackResultType.VULNSURE));
+            for (int i = 0; i < stringDelimiters.length; i++) {
+                for (int j = 0; j < multilineComments.length; j++) {
+                    attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
+                            + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
+                    attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
+                            , indicator, AttackData.AttackResultType.VULNSURE));
+                }
             }
-        }
 
-        for(int i = 0; i<stringDelimiters.length;i++) {
-            for(int j = 0; j<concatenation.length;j++) {
-                attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + concatenation[j]
-                        + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
+            for (int i = 0; i < stringDelimiters.length; i++) {
+                for (int j = 0; j < concatenation.length; j++) {
+                    attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + concatenation[j]
+                            + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
+                }
             }
-        }
 
-        for(int i=0;i<numericInjections.length;i++) {
-            attacks.add(new AttackData(attackIndex++, indicator + numericInjections[i], indicator,
-                    AttackData.AttackResultType.VULNUNSURE));
+            for (int i = 0; i < numericInjections.length; i++) {
+                attacks.add(new AttackData(attackIndex++, indicator + numericInjections[i], indicator,
+                        AttackData.AttackResultType.VULNUNSURE));
+            }
+            attacks.add(new AttackData(attackIndex++, "abs(" + indicator +")", indicator,
+                    AttackData.AttackResultType.VULNSURE));
         }
-
-        return attacks;
+        return new ArrayList<>(new LinkedHashSet<>(attacks));
     }
 
     @Override
     protected String getAtkName() {
-        return "BACKSLASH";
+        return ATTACK_NAME;
     }
 
     @Override
@@ -156,18 +158,13 @@ public class AttackBackslash extends AttackI {
     @Override
     public boolean performNextAttack() {
         boolean doContinue = true;
-        AttackData data;
 
         if(attackData.isEmpty())
             return false;
 
         BurpCallbacks.getInstance().print("A: " + state);
 
-        if (state == -1) {
-            data = new AttackData(-1, "", "", AttackData.AttackResultType.INFO);
-        } else {
-            data = attackData.get(state);
-        }
+        AttackData data = attackData.get(state);
         SentinelHttpMessageAtk httpMessage;
         try {
             httpMessage = attack(data, false);
@@ -175,13 +172,15 @@ public class AttackBackslash extends AttackI {
                 state++;
                 return false;
             }
+            analyzeResponse(data, httpMessage);
         } catch (ConnectionTimeoutException ex) {
             state++;
-            BurpCallbacks.getInstance().print("Connection timeout: " + ex.getLocalizedMessage());
             return false;
+        } catch (UnsupportedEncodingException e) {
+            state++;
+            BurpCallbacks.getInstance().print("Encoding error: " + e.getLocalizedMessage());
         }
 
-        analyzeResponse(data, httpMessage);
 
         if(state >= attackData.size()-1) {
             doContinue = false;
@@ -192,17 +191,41 @@ public class AttackBackslash extends AttackI {
     }
 
     private void analyzeResponse(AttackData data, SentinelHttpMessageAtk httpMessage) {
-        // Highlight indicator anyway
-        String indicator = XssIndicator.getInstance().getBaseIndicator();
-        if (! indicator.equals(data.getOutput())) {
-            ResponseHighlight h = new ResponseHighlight(indicator, Color.green);
+        boolean hasError = false;
+        ResponseCategory responseCategory = null;
+
+        String response = httpMessage.getRes().getResponseStr();
+        if (response == null || response.length() == 0) {
+            BurpCallbacks.getInstance().print("Response error");
+            return;
+        }
+
+        for(ResponseCategory rc: httpMessage.getRes().getCategories()) {
+            hasError = true;
+            responseCategory = rc;
+            break;
+        }
+
+        if (hasError) {
+            AttackResult res = new AttackResult(
+                    AttackData.AttackResultType.VULNSURE,
+                    this.ATTACK_NAME,
+                    httpMessage.getReq().getChangeParam(),
+                    true,
+                    "Error: " + responseCategory.getIndicator(),
+                    "Exception message in response");
+            httpMessage.addAttackResult(res);
+        }
+
+        if (response.contains(data.getOutput())) {
+            ResponseHighlight h = new ResponseHighlight(data.getOutput(), Color.green);
             httpMessage.getRes().addHighlight(h);
         }
     }
 
 
-    public static void main(String[] args) throws  UnsupportedEncodingException {
-        Collection<? extends AttackData> attacks = generateAttackData("FUZZME");
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        Collection<? extends AttackData> attacks = generateAttackData("FUZZME", true);
 
         attacks.stream().map(AttackData::getInput).map(s -> {
             try {

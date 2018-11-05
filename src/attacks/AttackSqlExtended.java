@@ -20,6 +20,8 @@ import attacks.model.AttackData;
 import attacks.model.AttackI;
 import gui.botLeft.PanelLeftInsertions;
 import gui.networking.AttackWorkEntry;
+
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import model.SentinelHttpMessageAtk;
 import org.apache.commons.lang3.StringUtils;
@@ -268,8 +270,10 @@ public class AttackSqlExtended extends AttackI {
             BurpCallbacks.getInstance().print("Connection timeout");
             state++;
             return false;
+        } catch (UnsupportedEncodingException e) {
+            BurpCallbacks.getInstance().print("Encoding error: " + e.getLocalizedMessage());
         }
-        
+
         state++;
         
         // End

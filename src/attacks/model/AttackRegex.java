@@ -20,6 +20,7 @@ import attacks.model.AttackData;
 import attacks.model.AttackI;
 import gui.networking.AttackWorkEntry;
 import java.awt.Color;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import model.ResponseHighlight;
 import model.SentinelHttpMessageAtk;
@@ -86,12 +87,14 @@ public class AttackRegex extends AttackI {
                 state++;
                 return false;
             }
+            analyzeResponse(data, httpMessage);
         } catch (ConnectionTimeoutException ex) {
             state++;
             return false;
+        } catch (UnsupportedEncodingException e) {
+            BurpCallbacks.getInstance().print("Encoding error: " + e.getLocalizedMessage());
         }
 
-        analyzeResponse(data, httpMessage);
 
         if(state >= attackData.size()-1) {
             doContinue = false;

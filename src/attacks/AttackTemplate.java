@@ -20,6 +20,7 @@ import attacks.model.AttackData;
 import attacks.model.AttackI;
 import gui.networking.AttackWorkEntry;
 import java.awt.Color;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import model.ResponseHighlight;
 import model.SentinelHttpMessageAtk;
@@ -42,30 +43,36 @@ public class AttackTemplate extends AttackI {
         super(work);
         
         attackData = new LinkedList<AttackData>();
-        String indicator;
-        
-        indicator = XssIndicator.getInstance().getIndicator();
-        
-        attackData.add(new AttackData(0, indicator, indicator, AttackData.AttackResultType.STATUSGOOD));
-        attackData.add(new AttackData(1, indicator + "{{777-111}}", indicator + "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(2, indicator + "${777-111}", indicator + "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(3, indicator + "{{1*'1'}}", indicator + "1", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(4, indicator + "a{*comment*}b", indicator + "ab", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(5, indicator + "${\"z\".join(\"ab\")}", indicator + "zab", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(6, "cos.constructor(\"return \\\"" + indicator + "\\\"\")()", indicator, AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(7, "concat.constructor(\"return 777-111\")()", "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(8, indicator + "#{777-111}", indicator + "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(9, "= 777-111", "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(10, "{{777-111}}", "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(11, "${777-111}", "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(12, "a{*comment*}bcd", "abcd", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(13, "${\"z\".join(\"abcd\")}", indicator + "zabcd", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(14, "#{777-111}", "666", AttackData.AttackResultType.VULNSURE));
-		attackData.add(new AttackData(15, "666+0", "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(16, "666-0", "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(17, "666/1", "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(18, "666*1", "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(19, "#set( $string = \"This is string\" )\r\n$string.class", "java.lang.String",AttackData.AttackResultType.VULNSURE));
+        String indicator = attackWorkEntry.attackHttpParam.getDecodedValue();
+
+        int index = 0;
+
+        attackData.add(new AttackData(index++, indicator, indicator, AttackData.AttackResultType.STATUSGOOD));
+        attackData.add(new AttackData(index++, "{{'" + indicator +"'}}",  indicator, AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{{777-111}}",  "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "${777-111}",  "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "${'"+indicator +"'}",  indicator, AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{{3*'6'}}",  "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++,  "6{*comment*}66",  "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++,  "6{{! comment}}66",  "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++,  "${\"6\".join(\"66\")}",  "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "cos.constructor(\"return \\\"" + indicator + "\\\"\")()", indicator, AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "concat.constructor(\"return 777-111\")()", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "#{777-111}", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "= 777-111", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "#{'"+indicator+"'}", indicator, AttackData.AttackResultType.VULNSURE));
+		attackData.add(new AttackData(index++, "666+0", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "666-0", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "666/1", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "666*1", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "#set( $string = \"666\" )\r\n$string.class", "java.lang.String",AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "*{class}", "java",AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "~{:: title}", "",AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "@{/order/{orderId}/details(orderId=${777-111})}", "666",AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "${{777-111}}", "666",AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "*{{class}}", "java",AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "__${777-111}__", "666",AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "!{777-111}", "666",AttackData.AttackResultType.VULNSURE));
     }
     
     @Override
@@ -87,7 +94,10 @@ public class AttackTemplate extends AttackI {
     @Override
     public boolean performNextAttack() {
         boolean doContinue = true;
-        
+
+        if(attackData.isEmpty())
+            return false;
+
         BurpCallbacks.getInstance().print("A: " + state);
         
         AttackData data = attackData.get(state);
@@ -98,13 +108,16 @@ public class AttackTemplate extends AttackI {
                 state++;
                 return false;
             }
+            analyzeResponse(data, httpMessage);
+
         } catch (ConnectionTimeoutException ex) {
             state++;
             BurpCallbacks.getInstance().print("Connection timeout: " + ex.getLocalizedMessage());
             return false;
+        } catch (UnsupportedEncodingException e) {
+            BurpCallbacks.getInstance().print("Encoding error: " + e.getLocalizedMessage());
         }
- 
-        analyzeResponse(data, httpMessage);
+
 
         if(state >= attackData.size()-1) {
             doContinue = false;
@@ -115,12 +128,16 @@ public class AttackTemplate extends AttackI {
     }
     
     private void analyzeResponse(AttackData data, SentinelHttpMessageAtk httpMessage) {
-        // Highlight indicator anyway
-        String indicator = XssIndicator.getInstance().getBaseIndicator();
-        if (! indicator.equals(data.getOutput())) {
-            ResponseHighlight h = new ResponseHighlight(indicator, Color.green);
-            httpMessage.getRes().addHighlight(h);
-        }
+            String response = httpMessage.getRes().getResponseStr();
+            if (response == null || response.length() == 0) {
+                BurpCallbacks.getInstance().print("Response error");
+                return;
+            }
+
+            if (response.contains(data.getOutput())) {
+                ResponseHighlight h = new ResponseHighlight(data.getOutput(), Color.green);
+                httpMessage.getRes().addHighlight(h);
+            }
     }
 
 }
