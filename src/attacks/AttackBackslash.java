@@ -158,13 +158,18 @@ public class AttackBackslash extends AttackI {
     @Override
     public boolean performNextAttack() {
         boolean doContinue = true;
+        AttackData data = null;
 
         if(attackData.isEmpty())
             return false;
 
         BurpCallbacks.getInstance().print("A: " + state);
 
-        AttackData data = attackData.get(state);
+        if (state == -1) {
+            data = new AttackData(-1, "", "", AttackData.AttackResultType.INFO);
+        } else {
+            data = attackData.get(state);
+        }
         SentinelHttpMessageAtk httpMessage;
         try {
             httpMessage = attack(data, false);
