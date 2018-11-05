@@ -103,36 +103,36 @@ public class AttackBackslash extends AttackI {
                             AttackData.AttackResultType.VULNSURE));
                 }
             }
-        }
+        } else {
 
-        for (int i = 0; i < stringDelimiters.length; i++) {
-            for (int j = 0; j < singleLineComments.length; j++) {
-                attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + singleLineComments[j],
-                        indicator, AttackData.AttackResultType.VULNSURE));
+            for (int i = 0; i < stringDelimiters.length; i++) {
+                for (int j = 0; j < singleLineComments.length; j++) {
+                    attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + singleLineComments[j],
+                            indicator, AttackData.AttackResultType.VULNSURE));
+                }
+            }
+
+            for (int i = 0; i < stringDelimiters.length; i++) {
+                for (int j = 0; j < multilineComments.length; j++) {
+                    attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
+                            + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
+                    attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
+                            , indicator, AttackData.AttackResultType.VULNSURE));
+                }
+            }
+
+            for (int i = 0; i < stringDelimiters.length; i++) {
+                for (int j = 0; j < concatenation.length; j++) {
+                    attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + concatenation[j]
+                            + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
+                }
+            }
+
+            for (int i = 0; i < numericInjections.length; i++) {
+                attacks.add(new AttackData(attackIndex++, indicator + numericInjections[i], indicator,
+                        AttackData.AttackResultType.VULNUNSURE));
             }
         }
-
-        for (int i = 0; i < stringDelimiters.length; i++) {
-            for (int j = 0; j < multilineComments.length; j++) {
-                attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
-                        + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
-                attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
-                        , indicator, AttackData.AttackResultType.VULNSURE));
-            }
-        }
-
-        for (int i = 0; i < stringDelimiters.length; i++) {
-            for (int j = 0; j < concatenation.length; j++) {
-                attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + concatenation[j]
-                        + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
-            }
-        }
-
-        for (int i = 0; i < numericInjections.length; i++) {
-            attacks.add(new AttackData(attackIndex++, indicator + numericInjections[i], indicator,
-                    AttackData.AttackResultType.VULNUNSURE));
-        }
-
         return new ArrayList<>(new LinkedHashSet<>(attacks));
     }
 
