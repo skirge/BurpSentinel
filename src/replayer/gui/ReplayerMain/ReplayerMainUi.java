@@ -182,7 +182,7 @@ public class ReplayerMainUi extends javax.swing.JPanel implements ITab {
 //                    origHttpMessage.getHttpService().getProtocol().toLowerCase().equals("https") ? true : false);
             //newMessage.setParentHttpMessage(origHttpMessage);
             
- //           BurpCallbacks.getInstance().sendRessource(newMessage, true);
+ //           BurpCallbacks.getInstance().sendResource(newMessage, true);
             
  //           tableModel.addHttpMessage(newMessage);
             

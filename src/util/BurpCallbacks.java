@@ -60,11 +60,11 @@ public class BurpCallbacks {
         return burpCallbacks;
     }
     
-    public void sendRessource(final SentinelHttpMessage sentinelMessage, final boolean followRedirect, final ExternalUpdater updater) {
+    public void sendResource(final SentinelHttpMessage sentinelMessage, final boolean followRedirect, final ExternalUpdater updater) {
         Thread queryThread = new Thread() {
             public void run() {
                 try {
-                    sendRessource(sentinelMessage, followRedirect);
+                    sendResource(sentinelMessage, followRedirect);
                     
                     if (updater != null) {
                         updater.externalUpdate();
@@ -78,21 +78,21 @@ public class BurpCallbacks {
         
     }
 
-    public void sendRessource(SentinelHttpMessage httpMessage, boolean followRedirect) throws ConnectionTimeoutException {
+    public void sendResource(SentinelHttpMessage httpMessage, boolean followRedirect) throws ConnectionTimeoutException {
         if (getBurp() == null) {
-            BurpCallbacks.getInstance().print("sendRessource: No burp available. Abort.");
+            BurpCallbacks.getInstance().print("sendResource: No Burp available. Abort.");
             return;
         }
         if (httpMessage == null) {
-            BurpCallbacks.getInstance().print("sendRessource: Void httpmessage! See previous errors. Abort.");
+            BurpCallbacks.getInstance().print("sendResource: Void httpmessage! See previous errors. Abort.");
             return;
         }
         if (httpMessage.getHttpService() == null || httpMessage.getRequest() == null) {
-            BurpCallbacks.getInstance().print("sendRessource: Void data! Abort.");
+            BurpCallbacks.getInstance().print("sendResource: Void data! Abort.");
             return;
         }
         
-        BurpCallbacks.getInstance().print("sendRessource start");
+        BurpCallbacks.getInstance().print("sendResource start");
 
         IHttpRequestResponse r = null;
         long timeStart = System.currentTimeMillis();
@@ -100,10 +100,10 @@ public class BurpCallbacks {
         long time = System.currentTimeMillis() - timeStart;
         httpMessage.setLoadTime(time);
 
-        BurpCallbacks.getInstance().print("sendRessource end");
+        BurpCallbacks.getInstance().print("sendResource end");
 
         if (r.getResponse() == null) {
-            throw new ConnectionTimeoutException();
+            throw new ConnectionTimeoutException("sendResource, response is null");
         }
 
         if (followRedirect) {

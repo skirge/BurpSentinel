@@ -100,6 +100,7 @@ public class AttackTemplate extends AttackI {
             }
         } catch (ConnectionTimeoutException ex) {
             state++;
+            BurpCallbacks.getInstance().print("Connection timeout: " + ex.getLocalizedMessage());
             return false;
         }
  

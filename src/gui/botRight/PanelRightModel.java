@@ -76,9 +76,13 @@ public class PanelRightModel extends AbstractTableModel implements Observer {
         
     @Override
     public Class getColumnClass(int columnIndex) {
-        if(messages.isEmpty())
-            return null;
-        return getValueAt(0, columnIndex).getClass();
+        switch(columnIndex) {
+            case 0: return Integer.class;
+            case 6: return Integer.class;
+            case 7: return Integer.class;
+            case 9: return Integer.class;
+            default: return String.class;
+        }
     }
     
     

@@ -154,6 +154,7 @@ public class AttackXssLessThan extends AttackI {
             analyzeResponse(httpMessage, atkData);
         } catch (ConnectionTimeoutException ex) {
             state++;
+            BurpCallbacks.getInstance().print("Connection timeout: " + ex.getLocalizedMessage());
             return false;
         }
         

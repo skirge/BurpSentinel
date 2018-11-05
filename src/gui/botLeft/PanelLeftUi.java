@@ -16,7 +16,6 @@
  */
 package gui.botLeft;
 
-import attacks.model.AttackMain;
 import gui.SentinelMainUi;
 import gui.botLeft.AttackSelection.AttackSelectionUi;
 import gui.mainBot.PanelBotUi;
@@ -394,7 +393,7 @@ public class PanelLeftUi extends javax.swing.JPanel implements ExternalUpdater {
     // Send request again
     // The sender will call this.externalUpdate() upon success
     private void buttonSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSendActionPerformed
-        BurpCallbacks.getInstance().sendRessource(origHttpMessage, true, this);
+        BurpCallbacks.getInstance().sendResource(origHttpMessage, true, this);
     }//GEN-LAST:event_buttonSendActionPerformed
 
     // Burp successfully sent the request again

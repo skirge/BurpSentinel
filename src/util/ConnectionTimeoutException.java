@@ -24,4 +24,8 @@ public class ConnectionTimeoutException extends Exception {
     public ConnectionTimeoutException() {
         super();
     }
+
+    public ConnectionTimeoutException(String message) {
+        super(message);
+    }
 }

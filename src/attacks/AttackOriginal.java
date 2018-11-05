@@ -61,7 +61,7 @@ public class AttackOriginal extends AttackI {
             if (httpMessage == null) {
                return false;
             }
-            BurpCallbacks.getInstance().sendRessource(httpMessage, attackWorkEntry.followRedirect);
+            BurpCallbacks.getInstance().sendResource(httpMessage, attackWorkEntry.followRedirect);
             
             analyzeResponse(httpMessage);
             

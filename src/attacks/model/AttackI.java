@@ -174,7 +174,7 @@ public abstract class AttackI {
             return null;
         }
         lastHttpMessage = httpMessage;
-        BurpCallbacks.getInstance().sendRessource(httpMessage, attackWorkEntry.followRedirect);
+        BurpCallbacks.getInstance().sendResource(httpMessage, attackWorkEntry.followRedirect);
         
         if (! httpMessage.getRes().hasResponse()) {
             BurpCallbacks.getInstance().print("Response error");

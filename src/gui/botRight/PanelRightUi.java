@@ -338,7 +338,7 @@ public class PanelRightUi extends javax.swing.JPanel {
     /*** Functions for children ***/
     /*
     public void c_sendAgain() {
-        BurpCallbacks.getInstance().sendRessource(, true, this);
+        BurpCallbacks.getInstance().sendResource(, true, this);
     }*/
     
     public void c_sendToRepeater() {

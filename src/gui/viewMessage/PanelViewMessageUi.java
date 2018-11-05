@@ -470,7 +470,7 @@ public class PanelViewMessageUi extends javax.swing.JPanel implements ExternalUp
     /*** Functions for children ***/
     
     public void c_sendAgain() {
-        BurpCallbacks.getInstance().sendRessource(httpMessage, true, this);
+        BurpCallbacks.getInstance().sendResource(httpMessage, true, this);
     }
     
     public void c_sendToRepeater() {

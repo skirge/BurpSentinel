@@ -111,6 +111,7 @@ public class AttackXss extends AttackI {
                 return false;
             }
         } catch (ConnectionTimeoutException ex) {
+            BurpCallbacks.getInstance().print("Connection timeout: " + ex.getLocalizedMessage());
             state++;
             return false;
         }

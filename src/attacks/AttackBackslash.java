@@ -59,10 +59,10 @@ public class AttackBackslash extends AttackI {
 
     private static final String[] stringDelimiters = {
             "","\"","'","'''","]]","`","\r","\n","\r\n",
-            "%E5%98%8A","%0A","\u560a",
-            "%E5%98%8D","%0D","\u560d",
-            "%E5%98%BE","%3E","\u563e",
-            "%E5%98%BC","%3C","\u563c"
+            "\u560a",
+            "\u560d",
+            "\u563e",
+            "\u563c"
     };
 
     private static final String[] numericInjections = {
@@ -156,13 +156,18 @@ public class AttackBackslash extends AttackI {
     @Override
     public boolean performNextAttack() {
         boolean doContinue = true;
+        AttackData data;
 
         if(attackData.isEmpty())
             return false;
 
         BurpCallbacks.getInstance().print("A: " + state);
 
-        AttackData data = attackData.get(state);
+        if (state == -1) {
+            data = new AttackData(-1, "", "", AttackData.AttackResultType.INFO);
+        } else {
+            data = attackData.get(state);
+        }
         SentinelHttpMessageAtk httpMessage;
         try {
             httpMessage = attack(data, false);
@@ -172,6 +177,7 @@ public class AttackBackslash extends AttackI {
             }
         } catch (ConnectionTimeoutException ex) {
             state++;
+            BurpCallbacks.getInstance().print("Connection timeout: " + ex.getLocalizedMessage());
             return false;
         }
 
