@@ -19,6 +19,7 @@ package attacks;
 import attacks.model.AttackData;
 import attacks.model.AttackI;
 import attacks.model.AttackResult;
+import gui.categorizer.model.ResponseCategory;
 import gui.networking.AttackWorkEntry;
 import java.awt.Color;
 import java.io.UnsupportedEncodingException;
@@ -36,6 +37,7 @@ import util.ConnectionTimeoutException;
  * @author dobin
  */
 public class SmartCodeInjections extends AttackI {
+    private static final String ATTACK_NAME = "SMART_CODE";
     private final Color failColor = new Color(0xff, 0xcc, 0xcc, 100);
 
     private static final String[] singleLineComments = {
@@ -116,7 +118,7 @@ public class SmartCodeInjections extends AttackI {
 
     @Override
     protected String getAtkName() {
-        return "SMART_CODE";
+        return ATTACK_NAME;
     }
 
     @Override
@@ -147,12 +149,13 @@ public class SmartCodeInjections extends AttackI {
                 state++;
                 return false;
             }
+            analyzeResponse(data, httpMessage);
         } catch (ConnectionTimeoutException ex) {
             state++;
             return false;
+        } catch (UnsupportedEncodingException e) {
+            state++;
         }
-
-        analyzeResponse(data, httpMessage);
 
         if(state >= attackData.size()-1) {
             doContinue = false;
@@ -163,10 +166,30 @@ public class SmartCodeInjections extends AttackI {
     }
 
     private void analyzeResponse(AttackData data, SentinelHttpMessageAtk httpMessage) {
+        boolean hasError = false;
+        ResponseCategory responseCategory = null;
+
         String response = httpMessage.getRes().getResponseStr();
         if (response == null || response.length() == 0) {
             BurpCallbacks.getInstance().print("Response error");
             return;
+        }
+
+        for(ResponseCategory rc: httpMessage.getRes().getCategories()) {
+            hasError = true;
+            responseCategory = rc;
+            break;
+        }
+
+        if (hasError) {
+            AttackResult res = new AttackResult(
+                    AttackData.AttackResultType.VULNSURE,
+                    this.ATTACK_NAME,
+                    httpMessage.getReq().getChangeParam(),
+                    true,
+                    "Error: " + responseCategory.getIndicator(),
+                    "Exception message in response");
+            httpMessage.addAttackResult(res);
         }
 
         if (response.contains(data.getOutput())) {

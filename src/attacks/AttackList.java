@@ -23,6 +23,8 @@ import gui.lists.ListManager;
 import gui.lists.ListManagerList;
 import gui.networking.AttackWorkEntry;
 import java.awt.Color;
+import java.io.UnsupportedEncodingException;
+
 import model.ResponseHighlight;
 import model.SentinelHttpMessageAtk;
 import model.XssIndicator;
@@ -89,6 +91,9 @@ public class AttackList extends AttackI {
         } catch (ConnectionTimeoutException ex) {
             BurpCallbacks.getInstance().print("Connection timeout: " + ex.getLocalizedMessage());
             return false;
+        } catch (UnsupportedEncodingException e) {
+            BurpCallbacks.getInstance().print("Encoding error: " + e.getLocalizedMessage());
+
         }
 
         if (state < list.getContent().size() - 1) {

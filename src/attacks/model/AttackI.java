@@ -20,6 +20,8 @@ package attacks.model;
 import burp.IResponseVariations;
 import gui.networking.AttackWorkEntry;
 import gui.session.SessionManager;
+
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import model.SentinelHttpMessageAtk;
@@ -160,9 +162,8 @@ public abstract class AttackI {
     }
     
     
-    protected SentinelHttpMessageAtk attack(AttackData data, boolean removeOrReplace) throws ConnectionTimeoutException {
-        if (attackWorkEntry.attackHttpParam.getTypeStr().equals("GET") 
-                || attackWorkEntry.attackHttpParam.getTypeStr().equals("PATH")
+    protected SentinelHttpMessageAtk attack(AttackData data, boolean removeOrReplace) throws ConnectionTimeoutException, UnsupportedEncodingException {
+        if (attackWorkEntry.attackHttpParam.getTypeStr().equals("GET")
                 || attackWorkEntry.attackHttpParam.getTypeStr().equals("POST"))
         {
             data.urlEncode();

@@ -21,6 +21,7 @@ import attacks.model.AttackI;
 import gui.networking.AttackWorkEntry;
 
 import java.awt.Color;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 
 import model.ResponseHighlight;
@@ -113,6 +114,9 @@ public class AttackJSONInjection extends AttackI {
         } catch (ConnectionTimeoutException ex) {
             BurpCallbacks.getInstance().print("Connection timeout: " + ex.getLocalizedMessage());
             doContinue = false;
+        } catch (UnsupportedEncodingException e) {
+            state++;
+            BurpCallbacks.getInstance().print("Encoding error: " + e.getLocalizedMessage());
         }
 
         if (state >= attackData.size()-1) {

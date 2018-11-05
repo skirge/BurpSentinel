@@ -19,6 +19,7 @@ package attacks;
 import attacks.model.AttackData;
 import attacks.model.AttackI;
 import attacks.model.AttackResult;
+import gui.categorizer.model.ResponseCategory;
 import gui.networking.AttackWorkEntry;
 import java.awt.Color;
 import java.io.UnsupportedEncodingException;
@@ -36,6 +37,7 @@ import util.ConnectionTimeoutException;
  * @author dobin
  */
 public class AttackBackslash extends AttackI {
+    private static final String ATTACK_NAME = "BACKSLASH";
     private final Color failColor = new Color(0xff, 0xcc, 0xcc, 100);
     private static final char[] specialCharacters = {' ','!','"','#','$','%','&','(',')','*','+',',','-','.','/',':',';','<',
             '=','>','?','@','[','\\',']','^','_','`','{','|','}','~','\'','t','b','r','n','f','0','1','2','u','o','x','\r','\n',
@@ -79,7 +81,7 @@ public class AttackBackslash extends AttackI {
 
     @Override
     protected String getAtkName() {
-        return "BACKSLASH";
+        return ATTACK_NAME;
     }
 
     @Override
@@ -110,12 +112,15 @@ public class AttackBackslash extends AttackI {
                 state++;
                 return false;
             }
+            analyzeResponse(data, httpMessage);
         } catch (ConnectionTimeoutException ex) {
             state++;
             return false;
+        } catch (UnsupportedEncodingException e) {
+            state++;
+            BurpCallbacks.getInstance().print("Encoding error: " + e.getLocalizedMessage());
         }
 
-        analyzeResponse(data, httpMessage);
 
         if(state >= attackData.size()-1) {
             doContinue = false;
@@ -126,10 +131,30 @@ public class AttackBackslash extends AttackI {
     }
 
     private void analyzeResponse(AttackData data, SentinelHttpMessageAtk httpMessage) {
+        boolean hasError = false;
+        ResponseCategory responseCategory = null;
+
         String response = httpMessage.getRes().getResponseStr();
         if (response == null || response.length() == 0) {
             BurpCallbacks.getInstance().print("Response error");
             return;
+        }
+
+        for(ResponseCategory rc: httpMessage.getRes().getCategories()) {
+            hasError = true;
+            responseCategory = rc;
+            break;
+        }
+
+        if (hasError) {
+            AttackResult res = new AttackResult(
+                    AttackData.AttackResultType.VULNSURE,
+                    this.ATTACK_NAME,
+                    httpMessage.getReq().getChangeParam(),
+                    true,
+                    "Error: " + responseCategory.getIndicator(),
+                    "Exception message in response");
+            httpMessage.addAttackResult(res);
         }
 
         if (response.contains(data.getOutput())) {

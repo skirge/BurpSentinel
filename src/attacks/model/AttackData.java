@@ -19,6 +19,8 @@ package attacks.model;
 
 import util.BurpCallbacks;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Objects;
 
 /**
@@ -81,8 +83,8 @@ public class AttackData {
         return success;
     }
  
-    public void urlEncode() {
-        input = BurpCallbacks.getInstance().getBurp().getHelpers().urlEncode(input);
+    public void urlEncode() throws UnsupportedEncodingException {
+        input = URLEncoder.encode(input,"UTF-8");
     }
 
     @Override
