@@ -89,10 +89,10 @@ public class NetworkerSender {
                 attack = new AttackRegex(work);
                 break;
             case BACKSLASH:
-                attack = new AttackBackslash(work);
+                attack = new AttackBackslash(work, true);
                 break;
             case SMART_CODE:
-                attack = new SmartCodeInjections(work);
+                attack = new AttackBackslash(work,false);
                 break;
             default:
                 BurpCallbacks.getInstance().print("Error, unknown attack type: " + attackType);
