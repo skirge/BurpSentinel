@@ -132,6 +132,8 @@ public class AttackBackslash extends AttackI {
                 attacks.add(new AttackData(attackIndex++, indicator + numericInjections[i], indicator,
                         AttackData.AttackResultType.VULNUNSURE));
             }
+            attacks.add(new AttackData(attackIndex++, "abs(" + indicator +")", indicator,
+                    AttackData.AttackResultType.VULNSURE));
         }
         return new ArrayList<>(new LinkedHashSet<>(attacks));
     }
