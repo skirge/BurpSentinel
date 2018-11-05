@@ -35,18 +35,40 @@ import util.ConnectionTimeoutException;
  *
  * @author dobin
  */
-public class AttackBackslash extends AttackI {
+public class SmartCodeInjections extends AttackI {
     private final Color failColor = new Color(0xff, 0xcc, 0xcc, 100);
-    private static final char[] specialCharacters = {' ','!','"','#','$','%','&','(',')','*','+',',','-','.','/',':',';','<',
-            '=','>','?','@','[','\\',']','^','_','`','{','|','}','~','\'','t','b','r','n','f','0','1','2','u','o','x','\r','\n',
-            '\u560a','\u560d','\u563e','\u563c'
+
+    private static final String[] singleLineComments = {
+            "#", "//", "-- ", ";", "%", "'", "\"", "\\", "!", "*","\r","\n","\r\n"
+    };
+
+    private static final String[] multilineComments = {
+            "/*test*/","(*test*)","%(test)%", "{test}", "{-test-}","#|test|#","#=test=#", "#[test]#","--[[test]]",
+            "<!--test-->"
+    };
+
+    private static final String[] concatenation = {
+            ""," ","+",".","&","||","//","~","<>","..",":","^","++","$+",","
+    };
+
+    private static final String[] stringDelimiters = {
+            "","\"","'","'''","]]","`","\r","\n"
+    };
+
+    private static final String[] numericInjections = {
+            "+0","-0","/1","*1"," sum 0"," difference 0"," product 1"," add 0"," sub 0"," mul 1"," div 1"," idiv 1",
+            "**1","^1","|0"," $ne 0"," $gt 0"," $lt 0"," $eq 0"
+    };
+
+    private static final String[] commandSeparators = {
+            ";",",",":","\n","\r","\r\n","\u0008","\u0009","&&","||","&","|",">"
     };
 
     private LinkedList<AttackData> attackData;
 
     private int state = 0;
 
-    public AttackBackslash(AttackWorkEntry work) {
+    public SmartCodeInjections(AttackWorkEntry work) {
         super(work);
 
         attackData = new LinkedList<AttackData>();
@@ -61,17 +83,32 @@ public class AttackBackslash extends AttackI {
 
         attacks.add(new AttackData(attackIndex++, indicator, indicator, AttackData.AttackResultType.STATUSGOOD));
 
-        for(int i=0; i<specialCharacters.length; i++) {
-            for(int j = 0; j<specialCharacters.length; j++) {
-                attacks.add(new AttackData(attackIndex++,indicator + specialCharacters[i] + specialCharacters[j],
-                        indicator,AttackData.AttackResultType.VULNUNSURE));
-                attacks.add(new AttackData(attackIndex++, indicator + "\\" + specialCharacters[i] + specialCharacters[j],
-                        indicator + specialCharacters[i],
-                        AttackData.AttackResultType.VULNSURE));
-                attacks.add(new AttackData(attackIndex++, indicator + "\\\\" + specialCharacters[i] + specialCharacters[j],
-                        indicator + "\\" + specialCharacters[i],
-                        AttackData.AttackResultType.VULNSURE));
+        for(int i = 0; i<stringDelimiters.length;i++) {
+            for(int j = 0; j<singleLineComments.length;j++) {
+                attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + singleLineComments[j],
+                        indicator, AttackData.AttackResultType.VULNSURE));
             }
+        }
+
+        for(int i = 0; i<stringDelimiters.length;i++) {
+            for(int j = 0; j<multilineComments.length;j++) {
+                attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
+                        + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
+                attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + multilineComments[j]
+                        , indicator, AttackData.AttackResultType.VULNSURE));
+            }
+        }
+
+        for(int i = 0; i<stringDelimiters.length;i++) {
+            for(int j = 0; j<concatenation.length;j++) {
+                attacks.add(new AttackData(attackIndex++, indicator + stringDelimiters[i] + concatenation[j]
+                        + stringDelimiters[i], indicator, AttackData.AttackResultType.VULNSURE));
+            }
+        }
+
+        for(int i=0;i<numericInjections.length;i++) {
+            attacks.add(new AttackData(attackIndex++, indicator + numericInjections[i], indicator,
+                    AttackData.AttackResultType.VULNUNSURE));
         }
 
         return new ArrayList<>(new LinkedHashSet<>(attacks));
@@ -79,7 +116,7 @@ public class AttackBackslash extends AttackI {
 
     @Override
     protected String getAtkName() {
-        return "BACKSLASH";
+        return "SMART_CODE";
     }
 
     @Override

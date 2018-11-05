@@ -91,6 +91,9 @@ public class NetworkerSender {
             case BACKSLASH:
                 attack = new AttackBackslash(work);
                 break;
+            case SMART_CODE:
+                attack = new SmartCodeInjections(work);
+                break;
             default:
                 BurpCallbacks.getInstance().print("Error, unknown attack type: " + attackType);
                 return false;

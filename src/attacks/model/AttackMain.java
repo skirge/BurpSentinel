@@ -35,7 +35,8 @@ public class AttackMain {
         TMPL,
         JSON,
         REGEX,
-        BACKSLASH;
+        BACKSLASH,
+        SMART_CODE;
     };
     
     static private AttackMain attackMain;
@@ -57,7 +58,9 @@ public class AttackMain {
             AttackMain.AttackTypes.SQLE,
             AttackMain.AttackTypes.CMD,
             AttackMain.AttackTypes.JSON,
-            AttackTypes.REGEX
+            AttackTypes.REGEX,
+            AttackTypes.BACKSLASH,
+            AttackTypes.SMART_CODE
         };
     
     private AttackMain() {
@@ -71,6 +74,7 @@ public class AttackMain {
         attackList.add(new AttackDescription(AttackTypes.JSON, "JSON Injection"));
         attackList.add(new AttackDescription(AttackTypes.REGEX, "Regular Expression Injection"));
         attackList.add(new AttackDescription(AttackTypes.BACKSLASH, "Backslash payloads"));
+        attackList.add(new AttackDescription(AttackTypes.SMART_CODE, "Smart Code Injections"));
     }
     
 

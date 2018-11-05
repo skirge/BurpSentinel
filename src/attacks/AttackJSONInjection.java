@@ -54,25 +54,26 @@ public class AttackJSONInjection extends AttackI {
 
         attackData = new LinkedList<AttackData>();
 
-        String indicator = XssIndicator.getInstance().getIndicator();
+        String indicator = attackWorkEntry.attackHttpParam.getDecodedValue();
+        int index = 0;
 
-        attackData.add(new AttackData(0, indicator,indicator, AttackData.AttackResultType.STATUSGOOD));
-        attackData.add(new AttackData(1, "\"" + ESCAPE_UNICODE.translate(indicator) + "\"",indicator, AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(2, "[]",  "[]", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(3, "{}",  "{}", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(4, "1",  "1", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(5, "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",  "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(6, "\"test\"", "test", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(7, "{\"@class\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(8, "{\"java.io.IOException\":\"test\"}","Exception", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(9, "[\"java.io.IOException\",\"test\"]","Exception", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(10, "{\"@c\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(11, "{\"@type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(12, "{\"preferredClass\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(13, "{\"$type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(14, "{\"__type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(15, "{\"__record\":\"Map\"}","Exception", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(16, "{\"__iterable\":\"Map\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, indicator,indicator, AttackData.AttackResultType.STATUSGOOD));
+        attackData.add(new AttackData(index++, "\"" + ESCAPE_UNICODE.translate(indicator) + "\"",indicator, AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "[]",  "[]", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(index++, "{}",  "{}", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(index++, "1",  "1", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(index++, "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",  "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(index++, "\"test\"", "test", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{\"@class\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{\"java.io.IOException\":\"test\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "[\"java.io.IOException\",\"test\"]","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{\"@c\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{\"@type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{\"preferredClass\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{\"$type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{\"__type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{\"__record\":\"Map\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{\"__iterable\":\"Map\"}","Exception", AttackData.AttackResultType.VULNSURE));
     }
 
     @Override
@@ -94,6 +95,9 @@ public class AttackJSONInjection extends AttackI {
     @Override
     public boolean performNextAttack() {
         boolean doContinue = true;
+
+        if(attackData.isEmpty())
+            return false;
 
         BurpCallbacks.getInstance().print("A: " + state);
 
@@ -121,10 +125,14 @@ public class AttackJSONInjection extends AttackI {
 
 
     private void analyzeResponse(AttackData data, SentinelHttpMessageAtk httpMessage) {
-        // Highlight indicator anyway
-        String indicator = XssIndicator.getInstance().getBaseIndicator();
-        if (! indicator.equals(data.getOutput())) {
-            ResponseHighlight h = new ResponseHighlight(indicator, Color.green);
+        String response = httpMessage.getRes().getResponseStr();
+        if (response == null || response.length() == 0) {
+            BurpCallbacks.getInstance().print("Response error");
+            return;
+        }
+
+        if (response.contains(data.getOutput())) {
+            ResponseHighlight h = new ResponseHighlight(data.getOutput(), Color.green);
             httpMessage.getRes().addHighlight(h);
         }
     }

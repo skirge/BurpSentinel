@@ -19,6 +19,8 @@ package attacks.model;
 
 import util.BurpCallbacks;
 
+import java.util.Objects;
+
 /**
  *
  * @author unreal
@@ -82,4 +84,20 @@ public class AttackData {
     public void urlEncode() {
         input = BurpCallbacks.getInstance().getBurp().getHelpers().urlEncode(input);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AttackData that = (AttackData) o;
+        return Objects.equals(getInput(), that.getInput()) &&
+                Objects.equals(getOutput(), that.getOutput());
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getInput(), getOutput());
+    }
+
 }
