@@ -73,6 +73,8 @@ public class AttackTemplate extends AttackI {
         attackData.add(new AttackData(index++, "*{{class}}", "java",AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "__${777-111}__", "666",AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "!{777-111}", "666",AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "$(777-111)", "666",AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "@{(777-111)}", "666",AttackData.AttackResultType.VULNSURE));
     }
     
     @Override
