@@ -19,6 +19,7 @@ package attacks;
 import attacks.model.AttackData;
 import attacks.model.AttackI;
 import attacks.model.AttackResult;
+import burp.IIntruderPayloadGenerator;
 import gui.categorizer.model.ResponseCategory;
 import gui.networking.AttackWorkEntry;
 
@@ -84,7 +85,7 @@ public class AttackBackslash extends AttackI {
         attackData.addAll(generateAttackData(indicator, allPayloads));
     }
 
-    private static Collection<? extends AttackData> generateAttackData(String indicator, boolean allPayloads) {
+    public static List<AttackData> generateAttackData(String indicator, boolean allPayloads) {
         List attacks = new LinkedList<AttackData>();
 
         int attackIndex = 0;
@@ -241,4 +242,5 @@ public class AttackBackslash extends AttackI {
             return null;
         }).forEach(System.out::println);
     }
+
 }

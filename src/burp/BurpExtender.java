@@ -16,12 +16,20 @@
  */
 package burp;
 
+import attacks.AttackBackslash;
+import attacks.model.AttackData;
 import gui.CustomMenuItem;
 import gui.SentinelMainApi;
 import gui.SentinelMainUi;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.Collection;
+import java.util.List;
 import javax.swing.SwingUtilities;
+
+import intruder.BackslashIntruder;
+import intruder.BackslashIntruderPayloadFactory;
+import intruder.SmartCodeIntruderPayloadFactory;
 import replayer.gui.ReplayerMain.ReplayerMainUi;
 import util.BurpCallbacks;
 
@@ -90,6 +98,8 @@ public class BurpExtender implements IExtensionStateListener {
                 BurpCallbacks.getInstance().print("Sentinel v1.1 - May 2018");
             }
         });
+        callbacks.registerIntruderPayloadGeneratorFactory(new BackslashIntruderPayloadFactory());
+        callbacks.registerIntruderPayloadGeneratorFactory(new SmartCodeIntruderPayloadFactory());
     }
 
     // On exit, store UI settings
