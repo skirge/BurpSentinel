@@ -65,13 +65,17 @@ public class AttackJSONInjection extends AttackI {
         attackData.add(new AttackData(index++, "1",  "1", AttackData.AttackResultType.VULNUNSURE));
         attackData.add(new AttackData(index++, "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",  "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999", AttackData.AttackResultType.VULNUNSURE));
         attackData.add(new AttackData(index++, "\"test\"", "test", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{\"class\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{\"$class\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{\"@class\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{\"java.io.IOException\":\"test\"}","Exception", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "[\"java.io.IOException\",\"test\"]","Exception", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{\"@c\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{\"type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{\"@type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{\"preferredClass\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{\"$type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{\"$types\":{\"java.io.IOException\":\"java.io.Exception\"}","Exception", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{\"__type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{\"__record\":\"Map\"}","Exception", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{\"__iterable\":\"Map\"}","Exception", AttackData.AttackResultType.VULNSURE));
