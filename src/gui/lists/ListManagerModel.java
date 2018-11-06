@@ -91,6 +91,7 @@ public class ListManagerModel {
             "sqlmap_blindsql",
             "wapiti_blindsql",
             "xss_rsnake",
+            "blns"
         };
         
         for(String fileName: fileNames) {
