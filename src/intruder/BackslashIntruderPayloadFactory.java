@@ -9,15 +9,21 @@ import burp.IIntruderPayloadGeneratorFactory;
 import java.util.List;
 
 public class BackslashIntruderPayloadFactory implements IIntruderPayloadGeneratorFactory {
+    private String name;
+    private List<AttackData> data;
+
+    public BackslashIntruderPayloadFactory(String name, List<AttackData> data) {
+        this.name = name;
+        this.data = data;
+    }
 
     @Override
     public String getGeneratorName() {
-        return "Sentinel - Backslash payloads";
+        return "Sentinel - " + name;
     }
 
     @Override
     public IIntruderPayloadGenerator createNewInstance(IIntruderAttack attack) {
-        List<AttackData> data = AttackBackslash.generateAttackData("FUZZME", true);
         return new BackslashIntruder(data);
     }
 

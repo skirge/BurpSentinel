@@ -21,10 +21,13 @@ import attacks.model.AttackI;
 import gui.networking.AttackWorkEntry;
 import java.awt.Color;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
+
 import model.ResponseHighlight;
 import model.SentinelHttpMessageAtk;
-import model.XssIndicator;
 import util.BurpCallbacks;
 import util.ConnectionTimeoutException;
 
@@ -35,18 +38,23 @@ import util.ConnectionTimeoutException;
 public class AttackTemplate extends AttackI {
     // Static:
     private final Color failColor = new Color(0xff, 0xcc, 0xcc, 100);
-    private LinkedList<AttackData> attackData;
+    private LinkedList<AttackData> attackData = new LinkedList<AttackData>();
     
     private int state = 0;
     
     public AttackTemplate(AttackWorkEntry work) {
         super(work);
         
-        attackData = new LinkedList<AttackData>();
         String indicator = attackWorkEntry.attackHttpParam.getDecodedValue();
 
         int index = 0;
 
+        attackData.addAll(generateAttackData(indicator));
+    }
+
+    public static List<AttackData> generateAttackData(String indicator) {
+        int index = 0;
+        List<AttackData> attackData = new LinkedList<AttackData>();
         attackData.add(new AttackData(index++, indicator, indicator, AttackData.AttackResultType.STATUSGOOD));
         attackData.add(new AttackData(index++, "{{'" + indicator +"'}}",  indicator, AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{{777-111}}",  "666", AttackData.AttackResultType.VULNSURE));
@@ -61,7 +69,7 @@ public class AttackTemplate extends AttackI {
         attackData.add(new AttackData(index++, "#{777-111}", "666", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "= 777-111", "666", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "#{'"+indicator+"'}", indicator, AttackData.AttackResultType.VULNSURE));
-		attackData.add(new AttackData(index++, "666+0", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "666+0", "666", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "666-0", "666", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "666/1", "666", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "666*1", "666", AttackData.AttackResultType.VULNSURE));
@@ -75,6 +83,7 @@ public class AttackTemplate extends AttackI {
         attackData.add(new AttackData(index++, "!{777-111}", "666",AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "$(777-111)", "666",AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "@{(777-111)}", "666",AttackData.AttackResultType.VULNSURE));
+        return new LinkedList<AttackData>(new LinkedHashSet<>(attackData));
     }
     
     @Override

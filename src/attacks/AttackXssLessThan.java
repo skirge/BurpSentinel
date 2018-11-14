@@ -23,7 +23,10 @@ import gui.networking.AttackWorkEntry;
 import model.ResponseHighlight;
 import java.awt.Color;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 import model.SentinelHttpMessageAtk;
 import model.XssIndicator;
@@ -38,7 +41,7 @@ public class AttackXssLessThan extends AttackI {
 
     private static String atkName = "XSSLT";
     
-    private String[] attackStrings = {
+    private static String[] attackStrings = {
         "<",
         "%3C",
         "&lt",
@@ -131,16 +134,22 @@ public class AttackXssLessThan extends AttackI {
     
     @Override
     public boolean init() {
+        String indicator = XssIndicator.getInstance().getIndicator();
+        attackDataXss.addAll(generateAttackData(indicator));
+        return true;
+    }
+
+    public static List<AttackData> generateAttackData(String indicator) {
+        List<AttackData> attackDataXss = new LinkedList<AttackData>();
         int n = 0;
         for (String s : attackStrings) {
-            String indicator = XssIndicator.getInstance().getIndicator();
-            AttackData atkData = new AttackData(n, 
-                    indicator + s, 
-                    indicator + "<", 
+            AttackData atkData = new AttackData(n++,
+                    indicator + s,
+                    indicator + "<",
                     AttackData.AttackResultType.VULNUNSURE);
             attackDataXss.add(atkData);
-        }       
-        return true;
+        }
+        return new LinkedList<>(new LinkedHashSet<>(attackDataXss));
     }
 
     @Override

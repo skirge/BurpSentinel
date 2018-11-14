@@ -73,14 +73,13 @@ public class AttackBackslash extends AttackI {
             ";",",",":","\n","\r","\r\n","\u0008","\u0009","\r","\n","\r\n","&&","||","&","|","\u001a",">"
     };
 
-    private LinkedList<AttackData> attackData;
+    private LinkedList<AttackData> attackData = new LinkedList<AttackData>();
 
     private int state = 0;
 
     public AttackBackslash(AttackWorkEntry work, boolean allPayloads) {
         super(work);
 
-        attackData = new LinkedList<AttackData>();
         String indicator = attackWorkEntry.attackHttpParam.getDecodedValue();
         attackData.addAll(generateAttackData(indicator, allPayloads));
     }
@@ -137,7 +136,7 @@ public class AttackBackslash extends AttackI {
             attacks.add(new AttackData(attackIndex++, "abs(" + indicator +")", indicator,
                     AttackData.AttackResultType.VULNSURE));
         }
-        return new ArrayList<>(new LinkedHashSet<>(attacks));
+        return new LinkedList<AttackData>(new LinkedHashSet<>(attacks));
     }
 
     @Override

@@ -22,7 +22,11 @@ import gui.networking.AttackWorkEntry;
 import model.ResponseHighlight;
 import java.awt.Color;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
+
 import model.SentinelHttpMessageAtk;
 import model.XssIndicator;
 import util.BurpCallbacks;
@@ -45,11 +49,8 @@ public class AttackXss extends AttackI {
     public AttackXss(AttackWorkEntry work) {
         super(work);
         analyzer = new AttackXssAnalyzer();
-        
-        
-        String indicator;
-        
-        indicator = XssIndicator.getInstance().getIndicator();
+
+        String indicator = XssIndicator.getInstance().getIndicator();
         /*
          1  <p>"
          2  %3Cp%3E%22
@@ -67,7 +68,11 @@ public class AttackXss extends AttackI {
         10  _\u0022a_æ_\u00e6
         11  %253Ca%2527%2522%253E
         */
-        
+        attackData.addAll(generateAttackData(indicator));
+    }
+
+    public static List<AttackData> generateAttackData(String indicator) {
+        List<AttackData> attackData = new LinkedList<AttackData>();
         attackData.add(new AttackData(0, indicator, indicator, AttackData.AttackResultType.STATUSGOOD));
         attackData.add(new AttackData(1, indicator + "<p>\"", indicator + "<p>\"", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(2, indicator + "%3Cp%3E%22", indicator + "<p>\"", AttackData.AttackResultType.VULNSURE));
@@ -80,8 +85,9 @@ public class AttackXss extends AttackI {
         attackData.add(new AttackData(9, indicator + "%5C%27%5C%22_\\'\\\"", indicator + "", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(10, indicator + "_\\u0022_æ_\\u00E6_", indicator + "", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(11, indicator + "%253Cp%2527%2522%253E", indicator + "<p'\">", AttackData.AttackResultType.VULNSURE));
+        return new LinkedList<AttackData>(new LinkedHashSet<>(attackData));
     }
- 
+
     @Override
     protected String getAtkName() {
         return "XSS";

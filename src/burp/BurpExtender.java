@@ -16,20 +16,16 @@
  */
 package burp;
 
-import attacks.AttackBackslash;
-import attacks.model.AttackData;
-import gui.CustomMenuItem;
+import attacks.*;
 import gui.SentinelMainApi;
 import gui.SentinelMainUi;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.SwingUtilities;
 
-import intruder.BackslashIntruder;
 import intruder.BackslashIntruderPayloadFactory;
-import intruder.SmartCodeIntruderPayloadFactory;
 import replayer.gui.ReplayerMain.ReplayerMainUi;
 import util.BurpCallbacks;
 
@@ -46,7 +42,18 @@ public class BurpExtender implements IExtensionStateListener {
 
     private SentinelMainUi sentinelMainUi;
     private ReplayerMainUi replayerMain;
-    
+    private HashMap<String, List> intruders = new HashMap<String, List>(){
+        {
+            put("Smart Code Injections", AttackBackslash.generateAttackData("FUZZME", false));
+            put("Backslash", AttackBackslash.generateAttackData("FUZZME", true));
+            put("Command Injections", AttackCommand.generateAttackData());
+            put("XSS", AttackXss.generateAttackData("FUZZME"));
+            put("XSS Less Than", AttackXssLessThan.generateAttackData("FUZZME"));
+            put("JSON Injections", AttackJSONInjection.generateAttackData("FUZZME"));
+            put("Template Injections", AttackTemplate.generateAttackData("FUZZME"));
+        }
+    };
+
     public BurpExtender() {
         // Nothing - everything gets done on registerExtenderCallbacks()
     }
@@ -95,11 +102,13 @@ public class BurpExtender implements IExtensionStateListener {
                 
                 //sentinelMainUi.initTestMessages();
                 
-                BurpCallbacks.getInstance().print("Sentinel v1.1 - May 2018");
+                BurpCallbacks.getInstance().print("Sentinel v1.2 - November 2018");
             }
         });
-        callbacks.registerIntruderPayloadGeneratorFactory(new BackslashIntruderPayloadFactory());
-        callbacks.registerIntruderPayloadGeneratorFactory(new SmartCodeIntruderPayloadFactory());
+
+        for(String key: intruders.keySet()) {
+            callbacks.registerIntruderPayloadGeneratorFactory(new BackslashIntruderPayloadFactory(key,intruders.get(key)));
+        }
     }
 
     // On exit, store UI settings

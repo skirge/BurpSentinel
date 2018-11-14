@@ -22,19 +22,15 @@ import gui.networking.AttackWorkEntry;
 
 import java.awt.Color;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 import model.ResponseHighlight;
-import model.SentinelHttpMessage;
 import model.SentinelHttpMessageAtk;
-import model.XssIndicator;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
-import org.apache.commons.lang3.text.translate.EntityArrays;
-import org.apache.commons.lang3.text.translate.LookupTranslator;
 import org.apache.commons.lang3.text.translate.UnicodeEscaper;
-import org.w3c.tidy.TidyMessage;
 import util.BurpCallbacks;
 import util.ConnectionTimeoutException;
 
@@ -44,7 +40,7 @@ import util.ConnectionTimeoutException;
 public class AttackJSONInjection extends AttackI {
     // Static:
     private final Color failColor = new Color(0xff, 0xcc, 0xcc, 100);
-    private LinkedList<AttackData> attackData;
+    private LinkedList<AttackData> attackData = new LinkedList<AttackData>();
 
     public static final CharSequenceTranslator ESCAPE_UNICODE = new UnicodeEscaper();
 
@@ -53,10 +49,14 @@ public class AttackJSONInjection extends AttackI {
     public AttackJSONInjection(AttackWorkEntry work) {
         super(work);
 
-        attackData = new LinkedList<AttackData>();
-
         String indicator = attackWorkEntry.attackHttpParam.getDecodedValue();
+
+        attackData.addAll(generateAttackData(indicator));
+    }
+
+    public static List<AttackData> generateAttackData(String indicator) {
         int index = 0;
+        List<AttackData> attackData = new LinkedList<AttackData>() ;
 
         attackData.add(new AttackData(index++, indicator,indicator, AttackData.AttackResultType.STATUSGOOD));
         attackData.add(new AttackData(index++, "\"" + ESCAPE_UNICODE.translate(indicator) + "\"",indicator, AttackData.AttackResultType.VULNSURE));
@@ -79,6 +79,7 @@ public class AttackJSONInjection extends AttackI {
         attackData.add(new AttackData(index++, "{\"__type\":\"java.io.IOException\"}","Exception", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{\"__record\":\"Map\"}","Exception", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{\"__iterable\":\"Map\"}","Exception", AttackData.AttackResultType.VULNSURE));
+        return new LinkedList<AttackData>(new LinkedHashSet<>(attackData));
     }
 
     @Override

