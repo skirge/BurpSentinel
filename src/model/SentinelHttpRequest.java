@@ -156,7 +156,11 @@ public class SentinelHttpRequest implements Serializable {
     }
 
     public static void extractHeaderParameters(LinkedList<SentinelHttpParam> httpParamsNew, byte[] request, IExtensionHelpers helpers) {
-        for(int pos = 0; pos < request.length; ) {
+        int headersEnd = helpers.indexOf(request,(CRLF+CRLF).getBytes(),false,0,request.length);
+        if(headersEnd==-1) {
+            headersEnd = request.length;
+        }
+        for(int pos = 0; pos < headersEnd; ) {
             int newLine = helpers.indexOf(request, CRLF.getBytes(), false, pos, request.length);
             if(newLine == -1 ) {
                 break;
@@ -356,12 +360,7 @@ public class SentinelHttpRequest implements Serializable {
         IExtensionHelpers helpers = BurpCallbacks.getInstance().getBurp().getHelpers();
         String req = helpers.bytesToString(request);
         StringBuilder r = new StringBuilder(req);
-        if(changeParam.isRemove()){
-            r.replace(origParam.getValueStart(), origParam.getValueEnd(), changeParam.getValue());
-        } else { // replace
-            String encoded = helpers.urlEncode(changeParam.getValue());
-            r.replace(origParam.getValueStart(), origParam.getValueEnd(), encoded);
-        }
+        r.replace(origParam.getValueStart(), origParam.getValueEnd(), changeParam.getValue());
         // rebuild request and recalculate Content-Length
         IRequestInfo newRequestInfo = helpers.analyzeRequest(helpers.stringToBytes(r.toString()));
         String newBody = r.substring(newRequestInfo.getBodyOffset());

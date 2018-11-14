@@ -166,7 +166,6 @@ public abstract class AttackI {
         String typeStr = attackWorkEntry.attackHttpParam.getTypeStr();
         if (typeStr.equals("GET")
                 || typeStr.equals("POST")
-                || typeStr.equals("HEADER")
                 || typeStr.equals("COOKIE"))
         {
             data.urlEncode();
