@@ -52,6 +52,7 @@ public class AttackCommand extends AttackI {
         attackData.add(new AttackData(8,  "\".sleep(10).\"", "", AttackData.AttackResultType.VULNUNSURE));
         attackData.add(new AttackData(9,  "\".`sleep 10`.\"", "", AttackData.AttackResultType.VULNUNSURE));
         attackData.add(new AttackData(10,  "{${sleep(10)}}", "", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(11, "${(#_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(@java.lang.Thread@sleep(10000))}","",AttackData.AttackResultType.VULNUNSURE));
     }
     
     @Override
