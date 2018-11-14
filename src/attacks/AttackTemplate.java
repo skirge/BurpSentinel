@@ -145,7 +145,7 @@ public class AttackTemplate extends AttackI {
                 return;
             }
 
-            if (response.contains(data.getOutput())) {
+            if (!"".equals(data.getOutput()) && response.contains(data.getOutput())) {
                 ResponseHighlight h = new ResponseHighlight(data.getOutput(), Color.green);
                 httpMessage.getRes().addHighlight(h);
             }

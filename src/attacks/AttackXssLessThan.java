@@ -189,7 +189,7 @@ public class AttackXssLessThan extends AttackI {
             return;
         }
 
-        if (response.contains(atkData.getOutput())) {
+        if (!"".equals(atkData.getOutput()) && response.contains(atkData.getOutput())) {
             atkData.setSuccess(true);
 
             AttackResult res = new AttackResult(
