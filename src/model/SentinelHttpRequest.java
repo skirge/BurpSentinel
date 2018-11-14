@@ -37,6 +37,8 @@ import util.BurpCallbacks;
  */
 public class SentinelHttpRequest implements Serializable {
 
+    public static final String CRLF = "\r\n";
+    public static final String SEPARATOR = ":";
     private LinkedList<SentinelHttpParam> httpParams = new LinkedList<SentinelHttpParam>();
     private LinkedList<SentinelHttpParamVirt> httpParamsVirt = new LinkedList<SentinelHttpParamVirt>();
     
@@ -128,7 +130,9 @@ public class SentinelHttpRequest implements Serializable {
         } else {
             BurpCallbacks.getInstance().print("requestinfo null!");
         }
-        
+
+        extractHeaderParameters(httpParamsNew, request,BurpCallbacks.getInstance().getBurp().getHelpers());
+
         // Sort parameter
         for(SentinelHttpParam sortParam: httpParamsNew) {
             if (sortParam.getType() == SentinelHttpParam.PARAM_URL) {
@@ -150,7 +154,57 @@ public class SentinelHttpRequest implements Serializable {
         // add additional parameter
         initMyParams();
     }
-        
+
+    public static void extractHeaderParameters(LinkedList<SentinelHttpParam> httpParamsNew, byte[] request, IExtensionHelpers helpers) {
+        for(int pos = 0; pos < request.length; ) {
+            int newLine = helpers.indexOf(request, CRLF.getBytes(), false, pos, request.length);
+            if(newLine == -1 ) {
+                break;
+            }
+            String header = new String(request, pos, newLine - pos);
+
+            if(header.contains("HTTP/") || header.startsWith("Content-Length")) {
+                pos += header.length() + CRLF.length();
+                continue;
+            }
+
+            int separatorIndex = header.indexOf(SEPARATOR);
+            if(separatorIndex == -1 ) {
+                BurpCallbacks.getInstance().print("Header line without separator, [" + header + "]");
+                pos += header.length() + CRLF.length();
+                continue;
+            }
+
+            String headerName = header.substring(0,separatorIndex);
+
+            int headerStart = helpers.indexOf(request, headerName.getBytes(), false, pos, request.length);
+            if(headerStart == -1) {
+                BurpCallbacks.getInstance().print("Header not found: [" + header + "]");
+                continue;
+            }
+            int headerEnd = headerStart + headerName.length();
+            if(separatorIndex + pos < headerEnd) {
+                BurpCallbacks.getInstance().print("Something wrong with header [" + header + "], separator not within a header line");
+                continue;
+            }
+            int valueStart = separatorIndex;
+            if (valueStart == -1 ) {
+                BurpCallbacks.getInstance().print("Value not found for header:[" + header + "]");
+                continue;
+            }
+            valueStart += SEPARATOR.length() + pos;
+            // skip whitespace
+            for(; valueStart < request.length && (request[valueStart] == 0x20 || request[valueStart] == 0x09);
+                valueStart++ );
+
+            int valueEnd = helpers.indexOf(request, CRLF.getBytes(),false,valueStart, request.length);
+            String headerValue = new String(request,valueStart,valueEnd - valueStart);
+            httpParamsNew.add(new SentinelHttpParam(SentinelHttpParam.PARAM_HEADER, headerName, headerStart, headerEnd,
+                    headerValue,valueStart, valueEnd, false));
+            pos = valueEnd + CRLF.length();
+        }
+    }
+
     private void initMyParams() {
         int newlineIndex = BurpCallbacks.getInstance().getBurp().getHelpers().indexOf(request, "\r\n".getBytes(), false, 0, request.length);
         if (newlineIndex < 0) {
@@ -275,6 +329,9 @@ public class SentinelHttpRequest implements Serializable {
             case SentinelHttpParam.PARAM_COOKIE:
                 request = BurpCallbacks.getInstance().getBurp().getHelpers().updateParameter(request, changeParam);
                 break;
+            case SentinelHttpParam.PARAM_HEADER:
+                request = updateHeader(request, changeParam);
+                break;
             default:
                 //BurpCallbacks.getInstance().print("ApplyChangeParam: Not supported type");    
                 request = updateParameterJSON(request, changeParam); // We just try this for now...
@@ -294,7 +351,24 @@ public class SentinelHttpRequest implements Serializable {
         
         return true;
     }
-    
+
+    private byte[] updateHeader(byte[] request, SentinelHttpParam changeParam) {
+        IExtensionHelpers helpers = BurpCallbacks.getInstance().getBurp().getHelpers();
+        String req = helpers.bytesToString(request);
+        StringBuilder r = new StringBuilder(req);
+        if(changeParam.isRemove()){
+            r.replace(origParam.getValueStart(), origParam.getValueEnd(), changeParam.getValue());
+        } else { // replace
+            String encoded = helpers.urlEncode(changeParam.getValue());
+            r.replace(origParam.getValueStart(), origParam.getValueEnd(), encoded);
+        }
+        // rebuild request and recalculate Content-Length
+        IRequestInfo newRequestInfo = helpers.analyzeRequest(helpers.stringToBytes(r.toString()));
+        String newBody = r.substring(newRequestInfo.getBodyOffset());
+        byte[] newRequest = helpers.buildHttpMessage(newRequestInfo.getHeaders(), helpers.stringToBytes(newBody) );
+        return newRequest;
+    }
+
     private byte[] updateParameterPath(byte[] request, SentinelHttpParam changeParam) {
         String req = BurpCallbacks.getInstance().getBurp().getHelpers().bytesToString(request);
 

@@ -26,6 +26,7 @@ import java.io.Serializable;
 public class SentinelHttpParam implements IParameter, Serializable {
 
     static final byte PARAM_PATH = 7;
+    static final byte PARAM_HEADER = 8;
     private byte type;
     private String name;
     private int nameStart;
@@ -82,6 +83,8 @@ public class SentinelHttpParam implements IParameter, Serializable {
                 return "JSON";
             case 7:
                 return "PATH";
+            case 8:
+                return "HEADER";
             default:
                 return "unknown";
         }

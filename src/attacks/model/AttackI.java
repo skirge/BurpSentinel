@@ -163,8 +163,11 @@ public abstract class AttackI {
     
     
     protected SentinelHttpMessageAtk attack(AttackData data, boolean removeOrReplace) throws ConnectionTimeoutException, UnsupportedEncodingException {
-        if (attackWorkEntry.attackHttpParam.getTypeStr().equals("GET")
-                || attackWorkEntry.attackHttpParam.getTypeStr().equals("POST"))
+        String typeStr = attackWorkEntry.attackHttpParam.getTypeStr();
+        if (typeStr.equals("GET")
+                || typeStr.equals("POST")
+                || typeStr.equals("HEADER")
+                || typeStr.equals("COOKIE"))
         {
             data.urlEncode();
         }
