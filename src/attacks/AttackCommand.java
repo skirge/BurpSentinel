@@ -51,18 +51,24 @@ public class AttackCommand extends AttackI {
 
     public static List<AttackData> generateAttackData() {
         List<AttackData> attackData = new LinkedList<AttackData>();
-        attackData.add(new AttackData(0, "() { :;}; sleep 10", "", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(1, ";sleep 10", "", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(2, "\";sleep 10", "", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(3, "';sleep 10", "", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(4, "|sleep 10", "", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(5, "& ping -c 10 127.0.0.1", "", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(6, "\" & ping -c 10 127.0.0.1", "", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(7,  "' & ping -c 10 127.0.0.1", "", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(8,  "\".sleep(10).\"", "", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(9,  "\".`sleep 10`.\"", "", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(10,  "{${sleep(10)}}", "", AttackData.AttackResultType.VULNUNSURE));
-        attackData.add(new AttackData(11, "${(#_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(@java.lang.Thread@sleep(10000))}","",AttackData.AttackResultType.VULNUNSURE));
+        int index = 0;
+        attackData.add(new AttackData(index++, "() { :;}; sleep 10", "", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(index++, ";sleep 10", "", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(index++, "\";sleep 10", "", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(index++, "';sleep 10", "", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(index++, "|sleep 10", "", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(index++, "& ping -c 10 127.0.0.1", "", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(index++, "\" & ping -c 10 127.0.0.1", "", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(index++,  "' & ping -c 10 127.0.0.1", "", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(index++,  "\".sleep(10).\"", "", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(index++,  "\".`sleep 10`.\"", "", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(index++,  "{${sleep(10)}}", "", AttackData.AttackResultType.VULNUNSURE));
+        attackData.add(new AttackData(index++, "${(#_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(@java.lang.Thread@sleep(10000))}","",AttackData.AttackResultType.VULNUNSURE));
+        for(int i =0; i < AttackBackslash.commandSeparators.length;i++) {
+            attackData.add(new AttackData(index++, AttackBackslash.commandSeparators[i] + "sleep 10", "", AttackData.AttackResultType.VULNUNSURE));
+            attackData.add(new AttackData(index++, AttackBackslash.commandSeparators[i] + "timeout 10", "", AttackData.AttackResultType.VULNUNSURE));
+            attackData.add(new AttackData(index++, AttackBackslash.commandSeparators[i] + "ping -c 10 127.0.0.1", "", AttackData.AttackResultType.VULNUNSURE));
+        }
         return new LinkedList<AttackData>(new LinkedHashSet<>(attackData));
     }
 
