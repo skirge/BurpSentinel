@@ -5,7 +5,7 @@ package burp;
  *
  * Copyright PortSwigger Ltd. All rights reserved.
  *
- * This code may be used to extend the functionality of Burp Suite Free Edition
+ * This code may be used to extend the functionality of Burp Suite Community Edition
  * and Burp Suite Professional, provided that this usage does not violate the
  * license terms for those products.
  */
@@ -31,47 +31,47 @@ public interface IBurpExtenderCallbacks
     /**
      * Flag used to identify Burp Suite as a whole.
      */
-    static final int TOOL_SUITE = 0x00000001;
+    int TOOL_SUITE = 0x00000001;
     /**
      * Flag used to identify the Burp Target tool.
      */
-    static final int TOOL_TARGET = 0x00000002;
+    int TOOL_TARGET = 0x00000002;
     /**
      * Flag used to identify the Burp Proxy tool.
      */
-    static final int TOOL_PROXY = 0x00000004;
+    int TOOL_PROXY = 0x00000004;
     /**
      * Flag used to identify the Burp Spider tool.
      */
-    static final int TOOL_SPIDER = 0x00000008;
+    int TOOL_SPIDER = 0x00000008;
     /**
      * Flag used to identify the Burp Scanner tool.
      */
-    static final int TOOL_SCANNER = 0x00000010;
+    int TOOL_SCANNER = 0x00000010;
     /**
      * Flag used to identify the Burp Intruder tool.
      */
-    static final int TOOL_INTRUDER = 0x00000020;
+    int TOOL_INTRUDER = 0x00000020;
     /**
      * Flag used to identify the Burp Repeater tool.
      */
-    static final int TOOL_REPEATER = 0x00000040;
+    int TOOL_REPEATER = 0x00000040;
     /**
      * Flag used to identify the Burp Sequencer tool.
      */
-    static final int TOOL_SEQUENCER = 0x00000080;
+    int TOOL_SEQUENCER = 0x00000080;
     /**
      * Flag used to identify the Burp Decoder tool.
      */
-    static final int TOOL_DECODER = 0x00000100;
+    int TOOL_DECODER = 0x00000100;
     /**
      * Flag used to identify the Burp Comparer tool.
      */
-    static final int TOOL_COMPARER = 0x00000200;
+    int TOOL_COMPARER = 0x00000200;
     /**
      * Flag used to identify the Burp Extender tool.
      */
-    static final int TOOL_EXTENDER = 0x00000400;
+    int TOOL_EXTENDER = 0x00000400;
 
     /**
      * This method is used to set the display name for the current extension,
@@ -863,8 +863,7 @@ public interface IBurpExtenderCallbacks
     void saveState(java.io.File file);
 
     /**
-     * This method causes Burp to save all of its current configuration as a Map
-     * of name/value Strings.
+     * This method is no longer supported. Please use saveConfigAsJson() instead.
      *
      * @return A Map of name/value Strings reflecting Burp's current
      * configuration.
@@ -874,13 +873,7 @@ public interface IBurpExtenderCallbacks
     Map<String, String> saveConfig();
 
     /**
-     * This method causes Burp to load a new configuration from the Map of
-     * name/value Strings provided. Any settings not specified in the Map will
-     * be restored to their default values. To selectively update only some
-     * settings and leave the rest unchanged, you should first call
-     * <code>saveConfig()</code> to obtain Burp's current configuration, modify
-     * the relevant items in the Map, and then call <code>loadConfig()</code>
-     * with the same Map.
+     * This method is no longer supported. Please use loadConfigFromJson() instead.
      *
      * @param config A map of name/value Strings to use as Burp's new
      * configuration.
