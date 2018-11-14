@@ -27,18 +27,25 @@ import java.awt.Color;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import model.ResponseHighlight;
 import model.SentinelHttpMessageAtk;
 import model.XssIndicator;
+import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
+import org.apache.commons.lang3.text.translate.UnicodeEscaper;
 import util.BurpCallbacks;
 import util.ConnectionTimeoutException;
+
+import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
 
 /**
  *
  * @author dobin
  */
 public class AttackBackslash extends AttackI {
+    public static final CharSequenceTranslator ESCAPE_UNICODE = new UnicodeEscaper();
+
     private static final String ATTACK_NAME = "BACKSLASH";
     private final Color failColor = new Color(0xff, 0xcc, 0xcc, 100);
 
@@ -69,7 +76,7 @@ public class AttackBackslash extends AttackI {
             "**1", "^1", "|0", " $ne 0", " $gt 0", " $lt 0", " $eq 0"
     };
 
-    private static final String[] commandSeparators = {
+    static final String[] commandSeparators = {
             ";",",",":","\n","\r","\r\n","\u0008","\u0009","\r","\n","\r\n","&&","||","&","|","\u001a",">"
     };
 
@@ -129,11 +136,34 @@ public class AttackBackslash extends AttackI {
                 }
             }
 
+            for(int i=0; i< commandSeparators.length; i++ ) {
+                attacks.add(new AttackData(attackIndex++, indicator + commandSeparators[i], indicator, AttackData.AttackResultType.VULNSURE));
+            }
+
             for (int i = 0; i < numericInjections.length; i++) {
                 attacks.add(new AttackData(attackIndex++, indicator + numericInjections[i], indicator,
                         AttackData.AttackResultType.VULNUNSURE));
             }
+            // abs is a very popular function
             attacks.add(new AttackData(attackIndex++, "abs(" + indicator +")", indicator,
+                    AttackData.AttackResultType.VULNSURE));
+            // identity encodings
+            attacks.add(new AttackData(attackIndex++, ESCAPE_UNICODE.translate(indicator), indicator,
+                    AttackData.AttackResultType.VULNSURE));
+
+            attacks.add(new AttackData(attackIndex++, indicator.chars()
+                    .mapToObj( c -> String.format( "0%03o ", c ) )
+                    .collect( Collectors.joining() ), indicator,
+                    AttackData.AttackResultType.VULNSURE));
+
+            attacks.add(new AttackData(attackIndex++, indicator.chars()
+                    .mapToObj( c -> String.format( "0x%x ", c ) )
+                    .collect( Collectors.joining() ), indicator,
+                    AttackData.AttackResultType.VULNSURE));
+
+            attacks.add(new AttackData(attackIndex++, indicator.chars()
+                    .mapToObj( c -> String.format( "\\x%x", c ) )
+                    .collect( Collectors.joining() ), indicator,
                     AttackData.AttackResultType.VULNSURE));
         }
         return new LinkedList<AttackData>(new LinkedHashSet<>(attacks));
@@ -222,7 +252,7 @@ public class AttackBackslash extends AttackI {
             httpMessage.addAttackResult(res);
         }
 
-        if (response.contains(data.getOutput())) {
+        if (!"".equals(data.getOutput()) && response.contains(data.getOutput())) {
             ResponseHighlight h = new ResponseHighlight(data.getOutput(), Color.green);
             httpMessage.getRes().addHighlight(h);
         }
@@ -230,15 +260,11 @@ public class AttackBackslash extends AttackI {
 
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        Collection<? extends AttackData> attacks = generateAttackData("FUZZME", true);
+        Collection<? extends AttackData> attacks = generateAttackData("FUZZME", false);
 
         attacks.stream().map(AttackData::getInput).map(s -> {
-            try {
-                return URLEncoder.encode(s,"utf-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            return null;
+            return s;
+            //return URLEncoder.encode(s,"utf-8");
         }).forEach(System.out::println);
     }
 
