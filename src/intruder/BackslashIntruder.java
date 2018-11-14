@@ -28,6 +28,11 @@ public class BackslashIntruder implements IIntruderPayloadGenerator
     public byte[] getNextPayload(byte[] baseValue)
     {
         byte[] payload = data.get(payloadIndex).getInput().getBytes();
+        if(baseValue!=null) {
+            String payloadString = new String(payload);
+            payloadString = payloadString.replace("FUZZME", new String(baseValue));
+            payload = payloadString.getBytes();
+        }
         payloadIndex++;
         return payload;
     }
