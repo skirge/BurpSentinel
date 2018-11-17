@@ -70,7 +70,7 @@ public class BurpCallbacks {
                         updater.externalUpdate();
                     }
                 } catch (ConnectionTimeoutException ex) {
-                    BurpCallbacks.getInstance().print("Error sendingz");
+                    BurpCallbacks.getInstance().print("Error sending:" + ex.getLocalizedMessage());
                 }
             }
         };
@@ -103,7 +103,7 @@ public class BurpCallbacks {
         BurpCallbacks.getInstance().print("sendResource end");
 
         if (r.getResponse() == null) {
-            throw new ConnectionTimeoutException("sendResource, response is null");
+            throw new ConnectionTimeoutException("sendResource, response is null:[" + httpMessage.getReq().getRequestStr() + "]");
         }
 
         if (followRedirect) {

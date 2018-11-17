@@ -138,42 +138,23 @@ public class AttackSqlExtended extends AttackI {
     // Also sets "doContinue"
     // Oh my god this is ugly
     private String getDataInt(AttackWorkEntry attackWorkEntry, String data) {
-        boolean onlyUrlencoded;
-        if (attackWorkEntry.attackHttpParam.getTypeStr().equals("GET") 
-                || attackWorkEntry.attackHttpParam.getTypeStr().equals("PATH")) 
-        {
-            onlyUrlencoded = true;
-        } else {
-            onlyUrlencoded = false;
-        }
 
-        if (onlyUrlencoded) {
+        if (state < attackSqlIntSize) {
             data = attackSqlInt(state, data);
-            data = Utility.realUrlEncode(data);
-                
-            if (state < attackSqlIntSize - 1) {
+
+            doContinue = true;
+        } else {
+            int newState = state - attackSqlIntSize;
+
+            data = attackSqlInt(newState, data);
+
+            if (newState < attackSqlIntSize - 1) {
                 doContinue = true;
             } else {
                 doContinue = false;
             }
-        } else {
-            if (state < attackSqlIntSize) {                
-                data = attackSqlInt(state, data);
-                data = Utility.realUrlEncode(data);
-            
-                doContinue = true;
-            } else {
-                int newState = state - attackSqlIntSize;
-                            
-                data = attackSqlInt(newState, data);
-                
-                if (newState < attackSqlIntSize - 1) {
-                    doContinue = true;
-                } else {
-                    doContinue = false;
-                }
-            }
         }
+
         
         return data;
     }
@@ -182,42 +163,23 @@ public class AttackSqlExtended extends AttackI {
     // Also sets "doContinue"
     // Oh my god this is ugly
     private String getDataStr(AttackWorkEntry attackWorkEntry, String data) {
-        boolean onlyUrlencoded;
-        if (attackWorkEntry.attackHttpParam.getTypeStr().equals("GET") 
-                || attackWorkEntry.attackHttpParam.getTypeStr().equals("PATH")) 
-        {
-            onlyUrlencoded = true;
-        } else {
-            onlyUrlencoded = false;
-        }
 
-        if (onlyUrlencoded) {
+        if (state < attackSqlStrSize) {
             data = attackSqlStr(state, data);
-            data = Utility.realUrlEncode(data);
-                
-            if (state < attackSqlStrSize - 1) {
+
+            doContinue = true;
+        } else {
+            int newState = state - attackSqlStrSize;
+
+            data = attackSqlStr(newState, data);
+
+            if (newState < attackSqlStrSize - 1) {
                 doContinue = true;
             } else {
                 doContinue = false;
             }
-        } else {
-            if (state < attackSqlStrSize) {                
-                data = attackSqlStr(state, data);
-                data = Utility.realUrlEncode(data);
-            
-                doContinue = true;
-            } else {
-                int newState = state - attackSqlStrSize;
-                            
-                data = attackSqlStr(newState, data);
-                
-                if (newState < attackSqlStrSize - 1) {
-                    doContinue = true;
-                } else {
-                    doContinue = false;
-                }
-            }
         }
+
         
         return data;
     }
@@ -267,7 +229,7 @@ public class AttackSqlExtended extends AttackI {
             
             analyzeResponse(httpMessage);
         } catch (ConnectionTimeoutException ex) {
-            BurpCallbacks.getInstance().print("Connection timeout");
+            BurpCallbacks.getInstance().print("Connection timeout"+ ex.getLocalizedMessage());
             state++;
             return false;
         } catch (UnsupportedEncodingException e) {
