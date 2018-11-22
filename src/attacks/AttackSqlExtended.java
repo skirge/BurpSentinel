@@ -84,7 +84,7 @@ public class AttackSqlExtended extends AttackI {
         return ret;
     }
 
-    private final int attackSqlStrSize = 11;
+    private final int attackSqlStrSize = 12;
     private String attackSqlStr(int state, String value) {
         String ret = "";
         
@@ -139,23 +139,14 @@ public class AttackSqlExtended extends AttackI {
     // Oh my god this is ugly
     private String getDataInt(AttackWorkEntry attackWorkEntry, String data) {
 
-        if (state < attackSqlIntSize) {
-            data = attackSqlInt(state, data);
+        data = attackSqlInt(state, data);
 
+        if (state < attackSqlIntSize - 1) {
             doContinue = true;
         } else {
-            int newState = state - attackSqlIntSize;
-
-            data = attackSqlInt(newState, data);
-
-            if (newState < attackSqlIntSize - 1) {
-                doContinue = true;
-            } else {
-                doContinue = false;
-            }
+            doContinue = false;
         }
 
-        
         return data;
     }
     
@@ -164,23 +155,14 @@ public class AttackSqlExtended extends AttackI {
     // Oh my god this is ugly
     private String getDataStr(AttackWorkEntry attackWorkEntry, String data) {
 
-        if (state < attackSqlStrSize) {
-            data = attackSqlStr(state, data);
+        data = attackSqlStr(state, data);
 
+        if (state < attackSqlStrSize - 1) {
             doContinue = true;
         } else {
-            int newState = state - attackSqlStrSize;
-
-            data = attackSqlStr(newState, data);
-
-            if (newState < attackSqlStrSize - 1) {
-                doContinue = true;
-            } else {
-                doContinue = false;
-            }
+            doContinue = false;
         }
 
-        
         return data;
     }
     
