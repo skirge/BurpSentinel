@@ -242,18 +242,20 @@ public class SentinelHttpRequest implements Serializable {
         LinkedList<SentinelHttpParam> pathParams = new LinkedList<SentinelHttpParam>();
         String[] p = path.split("/");
         int i = 0;
+        int valEnd = firstLine.indexOf("/"); // index of first /
         for (String pathPart : p) {
             if (pathPart.length() == 0) {
                 continue;
             }
             
-            int valStart = firstLine.indexOf('/' + pathPart);
+            int valStart = valEnd;
             valStart++; // because of /
+            valEnd = valStart + pathPart.length();
 
             SentinelHttpParam sentParam = new SentinelHttpParam(
                     SentinelHttpParam.PARAM_PATH,
                     Integer.toString(i), 0, 0, 
-                    pathPart, valStart, valStart + pathPart.length(), false);
+                    pathPart, valStart, valEnd, false);
             //httpParams.add(sentParam);
             pathParams.push(sentParam);
             i++;
@@ -371,8 +373,8 @@ public class SentinelHttpRequest implements Serializable {
     private byte[] updateParameterPath(byte[] request, SentinelHttpParam changeParam) {
         String req = BurpCallbacks.getInstance().getBurp().getHelpers().bytesToString(request);
 
-        req = req.replaceFirst(Pattern.quote("/" + origParam.getValue()), Matcher.quoteReplacement("/" + changeParam.getValue()));
-        
+        req = req.substring(0,origParam.getValueStart()) + changeParam.getValue() + req.substring(origParam.getValueEnd());
+
         return BurpCallbacks.getInstance().getBurp().getHelpers().stringToBytes(req);
     }
     
