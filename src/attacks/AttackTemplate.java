@@ -85,6 +85,8 @@ public class AttackTemplate extends AttackI {
         attackData.add(new AttackData(index++, "@{(777-111)}", "666",AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "T(String).valueOf(\"" + indicator + "\")", indicator,AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "T(Integer).valueOf(666)", "666",AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{{this}}", "Object",AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "{{self}}", "Object",AttackData.AttackResultType.VULNSURE));
         // errors
         attackData.add(new AttackData(index++, "${",  "Error", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{{",  "Error", AttackData.AttackResultType.VULNSURE));
