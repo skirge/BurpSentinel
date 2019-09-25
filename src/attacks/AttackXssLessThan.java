@@ -42,6 +42,11 @@ public class AttackXssLessThan extends AttackI {
     private static String atkName = "XSSLT";
     
     private static String[] attackStrings = {
+            "℀",
+            "〈",
+            "﹤",
+            "＜",
+            "≮",
         "<",
         "%3C",
         "&lt",
