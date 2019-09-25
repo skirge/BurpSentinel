@@ -49,6 +49,7 @@ public class AttackXssLessThan extends AttackI {
             "≮",
         "<",
         "%3C",
+        "%253C",
         "&lt",
         "&lt;",
         "&LT",
