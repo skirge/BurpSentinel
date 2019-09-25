@@ -96,6 +96,15 @@ public class AttackXss extends AttackI {
         attackData.add(new AttackData(index++, "≮" + indicator + ">","<" + indicator, VULNSURE));
         attackData.add(new AttackData(index++, "<" + indicator + "≯", indicator + ">", VULNSURE));
         attackData.add(new AttackData(index++, "℀" + indicator, "a/c" + indicator, VULNSURE));
+
+        attackData.add(new AttackData(index++, "⁈" + indicator, "?!" + indicator, VULNSURE));
+        attackData.add(new AttackData(index++, "：" + indicator, ":" + indicator, VULNSURE));
+        attackData.add(new AttackData(index++, " ／" + indicator, "/" + indicator, VULNSURE));
+        attackData.add(new AttackData(index++, "⒈" + indicator, "1." + indicator, VULNSURE));
+        attackData.add(new AttackData(index++, "＃" + indicator, "#" + indicator, VULNSURE));
+        attackData.add(new AttackData(index++, "＠" + indicator, "@" + indicator, VULNSURE));
+        attackData.add(new AttackData(index++, "@" + indicator, "@" + indicator, VULNSURE));
+
         return new LinkedList<AttackData>(new LinkedHashSet<>(attackData));
     }
 
