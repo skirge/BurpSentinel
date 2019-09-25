@@ -104,7 +104,8 @@ public class AttackXss extends AttackI {
         attackData.add(new AttackData(index++, "＃" + indicator, "#" + indicator, VULNSURE));
         attackData.add(new AttackData(index++, "＠" + indicator, "@" + indicator, VULNSURE));
         attackData.add(new AttackData(index++, "@" + indicator, "@" + indicator, VULNSURE));
-
+        attackData.add(new AttackData(index++, "\uFF03" + indicator, "#" + indicator, VULNSURE));
+        
         return new LinkedList<AttackData>(new LinkedHashSet<>(attackData));
     }
 
