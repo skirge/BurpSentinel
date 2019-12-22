@@ -49,7 +49,7 @@ public class AttackBackslash extends AttackI {
     private static final String ATTACK_NAME = "BACKSLASH";
     private final Color failColor = new Color(0xff, 0xcc, 0xcc, 100);
 
-    private static final char[] specialCharacters = {' ', '!', '"', '#', '$', '%', '&', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<',
+    private static final char[] specialCharacters = {'\0','\b','\f','\t',' ', '!', '"', '#', '$', '%', '&', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<',
             '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~', '\'', 't', 'b', 'r', 'n', 'f', '0', '1', '2', 'u', 'o', 'x', '\r', '\n',
             '\u560a', '\u560d', '\u563e', '\u563c'
     };
@@ -68,7 +68,7 @@ public class AttackBackslash extends AttackI {
     };
 
     private static final String[] stringDelimiters = {
-            "", "\"", "'", "'''", "]]", "`", "\r", "\n"
+            "", "\"", "'", "'''", "]]", "`", "\r", "\n","\f"
     };
 
     private static final String[] numericInjections = {
@@ -77,7 +77,7 @@ public class AttackBackslash extends AttackI {
     };
 
     static final String[] commandSeparators = {
-            ";",",",":","\n","\r","\r\n","\u0008","\u0009","\r","\n","\r\n","&&","||","&","|","\u001a",">","VAR=value "
+            ";",",",":","\n","\r","\r\n","\u0008","\u0009","\r","\n","\r\n","&&","||","&","|","\u001a",">","VAR=value ", "\b", "\f"
     };
 
     private LinkedList<AttackData> attackData = new LinkedList<AttackData>();
