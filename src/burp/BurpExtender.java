@@ -51,6 +51,8 @@ public class BurpExtender implements IExtensionStateListener {
             put("XSS Less Than", AttackXssLessThan.generateAttackData("FUZZME"));
             put("JSON Injections", AttackJSONInjection.generateAttackData("FUZZME"));
             put("Template Injections", AttackTemplate.generateAttackData("FUZZME"));
+            put("Unicode normalization", AttackUnicode.generateAttackData("FUZZME"));
+
         }
     };
 

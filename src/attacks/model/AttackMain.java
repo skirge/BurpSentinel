@@ -36,7 +36,8 @@ public class AttackMain {
         JSON,
         REGEX,
         BACKSLASH,
-        SMART_CODE;
+        SMART_CODE,
+        UNICODE;
     };
     
     static private AttackMain attackMain;
@@ -60,7 +61,8 @@ public class AttackMain {
             AttackMain.AttackTypes.JSON,
             AttackTypes.REGEX,
             AttackTypes.BACKSLASH,
-            AttackTypes.SMART_CODE
+            AttackTypes.SMART_CODE,
+            AttackTypes.UNICODE
         };
     
     private AttackMain() {
@@ -75,6 +77,8 @@ public class AttackMain {
         attackList.add(new AttackDescription(AttackTypes.REGEX, "Regular Expression Injection"));
         attackList.add(new AttackDescription(AttackTypes.BACKSLASH, "Backslash payloads"));
         attackList.add(new AttackDescription(AttackTypes.SMART_CODE, "Smart Code Injections"));
+        attackList.add(new AttackDescription(AttackTypes.UNICODE, "Unicode normalization"));
+
     }
     
 

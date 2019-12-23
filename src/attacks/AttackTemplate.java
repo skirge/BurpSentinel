@@ -96,6 +96,17 @@ public class AttackTemplate extends AttackI {
         attackData.add(new AttackData(index++, "~{",  "Error", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "!{",  "Error", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "@{",  "Error", AttackData.AttackResultType.VULNSURE));
+
+        attackData.add(new AttackData(index++, "\uFF04{",  "Error", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "\uFF20{",  "Error", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "\uFF03{",  "Error", AttackData.AttackResultType.VULNSURE));
+
+        attackData.add(new AttackData(index++, "\\uFF04{",  "Error", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "\\uFF20{",  "Error", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "\\uFF03{",  "Error", AttackData.AttackResultType.VULNSURE));
+
+
+
         return new LinkedList<AttackData>(new LinkedHashSet<>(attackData));
     }
     

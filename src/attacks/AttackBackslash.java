@@ -51,7 +51,7 @@ public class AttackBackslash extends AttackI {
 
     private static final char[] specialCharacters = {'\0','\b','\f','\t',' ', '!', '"', '#', '$', '%', '&', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<',
             '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~', '\'', 't', 'b', 'r', 'n', 'f', '0', '1', '2', 'u', 'o', 'x', '\r', '\n',
-            '\u560a', '\u560d', '\u563e', '\u563c'
+            '\u560a', '\u560d', '\u563e', '\u563c', '\uff04'
     };
 
     private static final String[] singleLineComments = {
@@ -77,7 +77,8 @@ public class AttackBackslash extends AttackI {
     };
 
     static final String[] commandSeparators = {
-            ";",",",":","\n","\r","\r\n","\u0008","\u0009","\r","\n","\r\n","&&","||","&","|","\u001a",">","VAR=value ", "\b", "\f"
+            ";",",",":","\n","\r","\r\n","\u0008","\u0009","\r","\n","\r\n","&&","||","&","|","\u001a",">","VAR=value ", "\b", "\f",
+            "\uff1a", "\uff1b", "\uffe4"
     };
 
     private LinkedList<AttackData> attackData = new LinkedList<AttackData>();

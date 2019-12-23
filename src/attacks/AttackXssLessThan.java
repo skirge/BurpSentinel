@@ -42,7 +42,6 @@ public class AttackXssLessThan extends AttackI {
     private static String atkName = "XSSLT";
     
     private static String[] attackStrings = {
-            "℀",
             "〈",
             "﹤",
             "＜",
@@ -118,6 +117,7 @@ public class AttackXssLessThan extends AttackI {
         "\\x3C",
         "\\u003c",
         "\\u003C",
+        "\\uxx3C"
     };
     
     private LinkedList<AttackData> attackDataXss = new LinkedList<AttackData>();
