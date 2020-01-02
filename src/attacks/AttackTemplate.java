@@ -56,6 +56,7 @@ public class AttackTemplate extends AttackI {
         int index = 0;
         List<AttackData> attackData = new LinkedList<AttackData>();
         attackData.add(new AttackData(index++, indicator, indicator, AttackData.AttackResultType.STATUSGOOD));
+        // injection in template context
         attackData.add(new AttackData(index++, "{{'" + indicator +"'}}",  indicator, AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{{777-111}}",  "666", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "${777-111}",  "666", AttackData.AttackResultType.VULNSURE));
@@ -89,6 +90,16 @@ public class AttackTemplate extends AttackI {
         attackData.add(new AttackData(index++, "{{self}}", "Object",AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{[expr 777-111]}", "666",AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{[error PWNED!]}", "PWNED!",AttackData.AttackResultType.VULNSURE));
+
+        // injection in template placeholder context
+        attackData.add(new AttackData(index++, "]}{[error PWNED!", "PWNED!",AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "}!{777-111", "666",AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, ")$(777-111", "666",AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, ")}@{(777-111", "666",AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "}#{777-111", "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "}}{{777-111",  "666", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "}*{class", "java",AttackData.AttackResultType.VULNSURE));
+
         // errors
         attackData.add(new AttackData(index++, "${",  "Error", AttackData.AttackResultType.VULNSURE));
         attackData.add(new AttackData(index++, "{{",  "Error", AttackData.AttackResultType.VULNSURE));
