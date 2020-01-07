@@ -68,7 +68,7 @@ public class AttackBackslash extends AttackI {
     };
 
     private static final String[] stringDelimiters = {
-            "", "\"", "'", "'''", "]]", "`", "\r", "\n","\f"
+            "", "\"", "'", "'''", "]]", "`", "\r", "\n","\f","$$","$TAG$"
     };
 
     private static final String[] numericInjections = {
