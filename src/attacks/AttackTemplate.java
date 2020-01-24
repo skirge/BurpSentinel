@@ -31,6 +31,9 @@ import model.SentinelHttpMessageAtk;
 import util.BurpCallbacks;
 import util.ConnectionTimeoutException;
 
+import static attacks.model.AttackData.AttackResultType.STATUSGOOD;
+import static attacks.model.AttackData.AttackResultType.VULNSURE;
+
 /**
  *
  * @author dobin
@@ -55,66 +58,66 @@ public class AttackTemplate extends AttackI {
     public static List<AttackData> generateAttackData(String indicator) {
         int index = 0;
         List<AttackData> attackData = new LinkedList<AttackData>();
-        attackData.add(new AttackData(index++, indicator, indicator, AttackData.AttackResultType.STATUSGOOD));
+        attackData.add(new AttackData(index++, indicator, indicator, STATUSGOOD));
         // injection in template context
-        attackData.add(new AttackData(index++, "{{'" + indicator +"'}}",  indicator, AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "{{777-111}}",  "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "${777-111}",  "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "${'"+indicator +"'}",  indicator, AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "{{3*'6'}}",  "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++,  "6{*comment*}66",  "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++,  "6{{! comment}}66",  "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++,  "${\"6\".join(\"66\")}",  "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "cos.constructor(\"return \\\"" + indicator + "\\\"\")()", indicator, AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "concat.constructor(\"return 777-111\")()", "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "#{777-111}", "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "= 777-111", "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "#{'"+indicator+"'}", indicator, AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "666+0", "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "666-0", "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "666/1", "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "666*1", "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "#set( $string = \"666\" )\r\n$string.class", "java.lang.String",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "*{class}", "java",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "~{:: title}", "",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "@{/order/{orderId}/details(orderId=${777-111})}", "666",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "${{777-111}}", "666",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "*{{class}}", "java",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "__${777-111}__", "666",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "!{777-111}", "666",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "$(777-111)", "666",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "@{(777-111)}", "666",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "T(String).valueOf(\"" + indicator + "\")", indicator,AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "T(Integer).valueOf(666)", "666",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "{{this}}", "Object",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "{{self}}", "Object",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "{[expr 777-111]}", "666",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "{[error PWNED!]}", "PWNED!",AttackData.AttackResultType.VULNSURE));
-
+        attackData.add(new AttackData(index++, "{{'" + indicator +"'}}",  indicator, VULNSURE));
+        attackData.add(new AttackData(index++, "{{777-111}}",  "666", VULNSURE));
+        attackData.add(new AttackData(index++, "${777-111}",  "666", VULNSURE));
+        attackData.add(new AttackData(index++, "${'"+indicator +"'}",  indicator, VULNSURE));
+        attackData.add(new AttackData(index++, "{{3*'6'}}",  "666", VULNSURE));
+        attackData.add(new AttackData(index++,  "6{*comment*}66",  "666", VULNSURE));
+        attackData.add(new AttackData(index++,  "6{{! comment}}66",  "666", VULNSURE));
+        attackData.add(new AttackData(index++,  "${\"6\".join(\"66\")}",  "666", VULNSURE));
+        attackData.add(new AttackData(index++, "cos.constructor(\"return \\\"" + indicator + "\\\"\")()", indicator, VULNSURE));
+        attackData.add(new AttackData(index++, "concat.constructor(\"return 777-111\")()", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "#{777-111}", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "= 777-111", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "#{'"+indicator+"'}", indicator, VULNSURE));
+        attackData.add(new AttackData(index++, "666+0", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "666-0", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "666/1", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "666*1", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "#set( $string = \"666\" )\r\n$string.class", "java.lang.String", VULNSURE));
+        attackData.add(new AttackData(index++, "*{class}", "java", VULNSURE));
+        attackData.add(new AttackData(index++, "~{:: title}", "", VULNSURE));
+        attackData.add(new AttackData(index++, "@{/order/{orderId}/details(orderId=${777-111})}", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "${{777-111}}", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "*{{class}}", "java", VULNSURE));
+        attackData.add(new AttackData(index++, "__${777-111}__", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "!{777-111}", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "$(777-111)", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "@{(777-111)}", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "T(String).valueOf(\"" + indicator + "\")", indicator, VULNSURE));
+        attackData.add(new AttackData(index++, "T(Integer).valueOf(666)", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "{{this}}", "Object", VULNSURE));
+        attackData.add(new AttackData(index++, "{{self}}", "Object", VULNSURE));
+        attackData.add(new AttackData(index++, "{[expr 777-111]}", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "{[error PWNED!]}", "PWNED!", VULNSURE));
+        attackData.add(new AttackData(index++, "<%= 777-111 %>", "666", VULNSURE));
         // injection in template placeholder context
-        attackData.add(new AttackData(index++, "]}{[error PWNED!", "PWNED!",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "}!{777-111", "666",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, ")$(777-111", "666",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, ")}@{(777-111", "666",AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "}#{777-111", "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "}}{{777-111",  "666", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "}*{class", "java",AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "]}{[error PWNED!", "PWNED!", VULNSURE));
+        attackData.add(new AttackData(index++, "}!{777-111", "666", VULNSURE));
+        attackData.add(new AttackData(index++, ")$(777-111", "666", VULNSURE));
+        attackData.add(new AttackData(index++, ")}@{(777-111", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "}#{777-111", "666", VULNSURE));
+        attackData.add(new AttackData(index++, "}}{{777-111",  "666", VULNSURE));
+        attackData.add(new AttackData(index++, "}*{class", "java", VULNSURE));
 
         // errors
-        attackData.add(new AttackData(index++, "${",  "Error", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "{{",  "Error", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "#{",  "Error", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "~{",  "Error", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "!{",  "Error", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "@{",  "Error", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "${",  "Error", VULNSURE));
+        attackData.add(new AttackData(index++, "{{",  "Error", VULNSURE));
+        attackData.add(new AttackData(index++, "#{",  "Error", VULNSURE));
+        attackData.add(new AttackData(index++, "~{",  "Error", VULNSURE));
+        attackData.add(new AttackData(index++, "!{",  "Error", VULNSURE));
+        attackData.add(new AttackData(index++, "@{",  "Error", VULNSURE));
 
-        attackData.add(new AttackData(index++, "\uFF04{",  "Error", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "\uFF20{",  "Error", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "\uFF03{",  "Error", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "\uFF04{",  "Error", VULNSURE));
+        attackData.add(new AttackData(index++, "\uFF20{",  "Error", VULNSURE));
+        attackData.add(new AttackData(index++, "\uFF03{",  "Error", VULNSURE));
 
-        attackData.add(new AttackData(index++, "\\uFF04{",  "Error", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "\\uFF20{",  "Error", AttackData.AttackResultType.VULNSURE));
-        attackData.add(new AttackData(index++, "\\uFF03{",  "Error", AttackData.AttackResultType.VULNSURE));
+        attackData.add(new AttackData(index++, "\\uFF04{",  "Error", VULNSURE));
+        attackData.add(new AttackData(index++, "\\uFF20{",  "Error", VULNSURE));
+        attackData.add(new AttackData(index++, "\\uFF03{",  "Error", VULNSURE));
 
 
 
